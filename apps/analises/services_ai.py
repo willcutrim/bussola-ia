@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Iterator
 from typing import Any
 
 from django.core.exceptions import ValidationError
@@ -26,6 +28,23 @@ from apps.documentos.models import Documento
 from apps.licitacoes.models import Licitacao
 
 
+@dataclass(frozen=True)
+class AnaliseAIExecutionResult:
+    payload: dict[str, Any]
+    model: str
+    response_id: str | None = None
+    raw_text: str = ""
+
+    def __getitem__(self, key: str) -> Any:
+        return self.payload[key]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.payload)
+
+    def __len__(self) -> int:
+        return len(self.payload)
+
+
 class AnaliseAIService:
     def __init__(
         self,
@@ -42,7 +61,7 @@ class AnaliseAIService:
         texto_documento: str,
         documento: Documento | None = None,
         licitacao: Licitacao | None = None,
-    ) -> dict[str, Any]:
+    ) -> AnaliseAIExecutionResult:
         prompt = build_document_summary_prompt(
             texto_documento=self._require_text(texto_documento),
             documento_contexto=build_documento_contexto(documento),
@@ -59,7 +78,7 @@ class AnaliseAIService:
         documento: Documento | None = None,
         licitacao: Licitacao | None = None,
         campos_alvo: list[str] | tuple[str, ...] | None = None,
-    ) -> dict[str, Any]:
+    ) -> AnaliseAIExecutionResult:
         prompt = build_extraction_prompt(
             texto_documento=self._require_text(texto_documento),
             campos_alvo=campos_alvo,
@@ -78,7 +97,7 @@ class AnaliseAIService:
         documento: Documento | None = None,
         analise: Analise | None = None,
         persistir: bool = False,
-    ) -> dict[str, Any]:
+    ) -> AnaliseAIExecutionResult:
         prompt = build_analysis_prompt(
             texto_documento=self._require_text(texto_documento),
             documento_contexto=build_documento_contexto(documento),
@@ -96,7 +115,7 @@ class AnaliseAIService:
         texto_documento: str,
         licitacao: Licitacao,
         documento: Documento | None = None,
-    ) -> dict[str, Any]:
+    ) -> AnaliseAIExecutionResult:
         prompt = build_comparison_prompt(
             texto_documento=self._require_text(texto_documento),
             documento_contexto=build_documento_contexto(documento),
@@ -111,7 +130,7 @@ class AnaliseAIService:
         licitacao: Licitacao | None = None,
         documento: Documento | None = None,
         contexto_comparacao: dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
+    ) -> AnaliseAIExecutionResult:
         prompt = build_checklist_prompt(
             texto_documento=texto_documento.strip()
             if isinstance(texto_documento, str)
@@ -132,7 +151,7 @@ class AnaliseAIService:
         documento: Documento | None = None,
         analise: Analise | None = None,
         persistir: bool = False,
-    ) -> dict[str, Any]:
+    ) -> AnaliseAIExecutionResult:
         prompt = build_priority_classification_prompt(
             texto_documento=self._require_text(texto_documento),
             licitacao_contexto=build_licitacao_contexto(
@@ -146,10 +165,16 @@ class AnaliseAIService:
             self._persistir_classificacao(analise, resultado)
         return resultado
 
-    def _run_task(self, prompt) -> dict[str, Any]:
+    def _run_task(self, prompt) -> AnaliseAIExecutionResult:
         task_config = get_task_config(prompt.task)
         response = self.client.gerar_resposta(prompt, task_config=task_config)
-        return self._normalize_payload(response.parsed, task_config.response_schema)
+        payload = self._normalize_payload(response.parsed, task_config.response_schema)
+        return AnaliseAIExecutionResult(
+            payload=payload,
+            model=response.model,
+            response_id=response.response_id,
+            raw_text=response.text,
+        )
 
     def _normalize_payload(
         self,
@@ -174,7 +199,7 @@ class AnaliseAIService:
     def _persistir_resultado_analitico(
         self,
         analise: Analise,
-        payload: dict[str, Any],
+        payload: AnaliseAIExecutionResult,
     ) -> Analise:
         return self.analise_service.atualizar(
             analise,
@@ -189,7 +214,7 @@ class AnaliseAIService:
     def _persistir_classificacao(
         self,
         analise: Analise,
-        payload: dict[str, Any],
+        payload: AnaliseAIExecutionResult,
     ) -> Analise:
         return self.analise_service.atualizar(
             analise,
@@ -228,4 +253,4 @@ class AnaliseAIService:
         return texto_documento.strip()
 
 
-__all__ = ["AnaliseAIService"]
+__all__ = ["AnaliseAIExecutionResult", "AnaliseAIService"]

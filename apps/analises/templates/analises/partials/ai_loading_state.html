@@ -1,0 +1,10 @@
+<div class="ai-state-panel ai-state-panel-loading">
+    <div class="d-flex align-items-center gap-3 mb-2">
+        <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+        <div>
+            <div class="fw-semibold">Processando analise...</div>
+            <div class="small text-secondary">{{ processing_message|default:"A IA pode levar alguns instantes para concluir esta etapa." }}</div>
+        </div>
+    </div>
+    <div class="small text-secondary">O card consulta o status automaticamente ate receber a resposta final.</div>
+</div>

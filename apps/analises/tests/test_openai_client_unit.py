@@ -6,7 +6,11 @@ from django.test import SimpleTestCase
 
 from apps.analises.builders import PromptPayload
 from apps.analises.constants import AnaliseAITask, get_task_config
-from apps.analises.integrations import AnaliseOpenAIClient, OpenAIClientConfig
+from apps.analises.integrations import (
+    AIPermanentError,
+    AnaliseOpenAIClient,
+    OpenAIClientConfig,
+)
 from apps.analises.schemas_ai import DocumentSummaryResponse
 
 
@@ -113,7 +117,7 @@ class AnaliseOpenAIClientUnitTests(SimpleTestCase):
         )
 
         with self.assertRaisesMessage(
-            ValueError,
+            AIPermanentError,
             "A resposta estruturada da IA nao retornou payload parseavel.",
         ):
             client.gerar_resposta(

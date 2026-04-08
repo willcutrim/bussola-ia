@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from config.tasks import ANALISES_AI_QUEUE_NAME, TASK_BACKEND_DEFAULT_PATH
+
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 
@@ -122,3 +124,27 @@ AUTH_USER_MODEL = "accounts.User"
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "accounts:login"
+
+TASKS = {
+    "default": {
+        "BACKEND": os.getenv("DJANGO_TASK_BACKEND", TASK_BACKEND_DEFAULT_PATH),
+        "QUEUES": ["default", ANALISES_AI_QUEUE_NAME],
+    }
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        }
+    },
+    "loggers": {
+        "apps.analises": {
+            "handlers": ["console"],
+            "level": os.getenv("ANALISES_LOG_LEVEL", "INFO"),
+            "propagate": False,
+        }
+    },
+}

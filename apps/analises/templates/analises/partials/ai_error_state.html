@@ -1,0 +1,16 @@
+<div class="ai-state-panel ai-state-panel-error">
+    <div class="alert alert-danger mb-0 rounded-4">
+        <div class="fw-semibold mb-2">Nao foi possivel concluir esta execucao</div>
+        <ul class="mb-0 ps-3">
+            {% if error_messages %}
+                {% for message in error_messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            {% elif execucao and execucao.mensagem_erro %}
+                <li>{{ execucao.mensagem_erro }}</li>
+            {% else %}
+                <li>Ocorreu um erro inesperado no processamento da analise.</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

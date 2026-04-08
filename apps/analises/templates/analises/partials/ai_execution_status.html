@@ -1,0 +1,67 @@
+<section class="ai-status-panel mb-4">
+    {% if execucao %}
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                {% if execucao.status == "pendente" %}
+                    <span class="status-pill status-pill-warning">Pendente</span>
+                    <span class="small text-secondary">A solicitacao entrou na fila e aguarda processamento.</span>
+                {% elif execucao.status == "em_processamento" %}
+                    <span class="status-pill status-pill-info">Em processamento</span>
+                    <span class="small text-secondary">A IA esta processando o conteudo enviado.</span>
+                {% elif execucao.status == "concluido" %}
+                    <span class="status-pill status-pill-success">Concluido</span>
+                    <span class="small text-secondary">Resultado consolidado e pronto para consulta.</span>
+                {% elif execucao.status == "falhou" %}
+                    <span class="status-pill status-pill-danger">Falhou</span>
+                    <span class="small text-secondary">O processamento nao foi concluido nesta tentativa.</span>
+                {% endif %}
+
+                {% if execucao.modelo_utilizado %}
+                    <span class="small text-secondary">Modelo: {{ execucao.modelo_utilizado }}</span>
+                {% endif %}
+                <span class="small text-secondary">Tentativas: {{ execucao.tentativas }}</span>
+            </div>
+
+            {% if allow_reprocess %}
+                <div class="d-flex flex-wrap gap-2">
+                    <button
+                        class="btn btn-outline-light btn-sm"
+                        type="button"
+                        hx-post="{{ request_url }}"
+                        hx-include="#analise-ai-form"
+                        hx-target="closest .ai-panel-shell"
+                        hx-swap="innerHTML"
+                        hx-indicator="#ai-processing-indicator">
+                        {{ retry_button_label }}
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="row g-2 mt-1">
+            <div class="col-12 col-sm-6">
+                <div class="small text-secondary">Solicitada em {{ execucao.solicitada_em|date:"d/m/Y H:i" }}</div>
+            </div>
+            <div class="col-12 col-sm-6">
+                {% if execucao.iniciada_em %}
+                    <div class="small text-secondary">Inicio em {{ execucao.iniciada_em|date:"d/m/Y H:i" }}</div>
+                {% endif %}
+            </div>
+            <div class="col-12 col-sm-6">
+                {% if execucao.concluida_em %}
+                    <div class="small text-secondary">Atualizado em {{ execucao.concluida_em|date:"d/m/Y H:i" }}</div>
+                {% endif %}
+            </div>
+            <div class="col-12 col-sm-6">
+                {% if execucao.identificador_task %}
+                    <div class="small text-secondary">Execucao {{ execucao.identificador_task|truncatechars:18 }}</div>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="status-pill status-pill-muted">Sem execucao</span>
+            <span class="small text-secondary">Dispare uma das acoes acima para iniciar o processamento assincrono.</span>
+        </div>
+    {% endif %}
+</section>

@@ -1,0 +1,39 @@
+<article
+    class="surface-card ai-result-card p-4 h-100 ai-result-container {% if error_messages %}ai-result-card-error{% elif execucao and execucao.status == 'falhou' %}ai-result-card-error{% endif %}"
+    {% if should_poll %}
+        hx-get="{{ resultado_url }}"
+        hx-trigger="{{ poll_trigger }}"
+        hx-swap="outerHTML"
+    {% endif %}
+>
+    <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mb-4">
+        <div>
+            <p class="eyebrow mb-2">IA</p>
+            <h3 class="h5 mb-1">{{ card_title }}</h3>
+            <p class="text-secondary mb-0">{{ card_description }}</p>
+        </div>
+        <span class="status-pill {{ badge_tone_class }}">{{ badge_label }}</span>
+    </div>
+
+    {% include "analises/partials/ai_execution_status.html" %}
+
+    <div class="d-grid gap-3">
+        {% if error_messages %}
+            {% include "analises/partials/ai_error_state.html" %}
+        {% elif execucao %}
+            {% if execucao.status == "pendente" or execucao.status == "em_processamento" %}
+                {% include "analises/partials/ai_loading_state.html" %}
+            {% elif execucao.status == "falhou" %}
+                {% include "analises/partials/ai_error_state.html" %}
+            {% elif result %}
+                {% include result_template_name %}
+            {% else %}
+                {% include "analises/partials/ai_empty_state.html" %}
+            {% endif %}
+        {% elif show_legacy_result %}
+            {% include result_template_name %}
+        {% else %}
+            {% include "analises/partials/ai_empty_state.html" %}
+        {% endif %}
+    </div>
+</article>

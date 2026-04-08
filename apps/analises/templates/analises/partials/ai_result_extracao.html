@@ -1,66 +1,51 @@
-<article class="surface-card ai-result-card p-4 h-100">
-    <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mb-4">
-        <div>
-            <p class="eyebrow mb-2">IA</p>
-            <h3 class="h5 mb-1">Dados extraidos</h3>
-            <p class="text-secondary mb-0">Campos estruturados para reaproveitamento futuro em automacoes e persistencia.</p>
+<div class="d-grid gap-3 mb-4">
+    {% for field_name, field_data in result.campos_extraidos.items %}
+        <div class="ai-field-item">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                <div>
+                    <div class="theme-detail-label mb-1">{{ field_name|cut:"_"|title }}</div>
+                    <div class="fw-semibold">{{ field_data.valor|default:"Nao identificado" }}</div>
+                    {% if field_data.fonte %}
+                        <div class="small text-secondary mt-1">Fonte: {{ field_data.fonte }}</div>
+                    {% endif %}
+                </div>
+                <div class="d-flex flex-wrap gap-2 align-items-start justify-content-lg-end">
+                    {% include "includes/status_badge.html" with tone="info" label=field_data.classificacao %}
+                    {% include "includes/status_badge.html" with tone="muted" label=field_data.confianca %}
+                </div>
+            </div>
         </div>
-        <span class="status-pill status-pill-info">Extracao</span>
+    {% empty %}
+        <div class="ai-mini-panel text-secondary">Nenhum campo estruturado retornado nesta execucao.</div>
+    {% endfor %}
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="ai-mini-panel">
+            <div class="theme-detail-label mb-2">Fatos de apoio</div>
+            <ul class="ai-list mb-0">
+                {% for item in result.fatos %}
+                    <li>{{ item }}</li>
+                {% empty %}
+                    <li class="text-secondary">Sem fatos adicionais.</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-
-    {% if result %}
-        <div class="d-grid gap-3 mb-4">
-            {% for field_name, field_data in result.campos_extraidos.items %}
-                <div class="ai-field-item">
-                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-                        <div>
-                            <div class="theme-detail-label mb-1">{{ field_name|cut:"_"|title }}</div>
-                            <div class="fw-semibold">{{ field_data.valor|default:"Nao identificado" }}</div>
-                            {% if field_data.fonte %}
-                                <div class="small text-secondary mt-1">Fonte: {{ field_data.fonte }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 align-items-start justify-content-lg-end">
-                            {% include "includes/status_badge.html" with tone="info" label=field_data.classificacao %}
-                            {% include "includes/status_badge.html" with tone="muted" label=field_data.confianca %}
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="ai-mini-panel text-secondary">Nenhum campo estruturado retornado nesta execucao.</div>
-            {% endfor %}
+    <div class="col-12 col-lg-6">
+        <div class="ai-mini-panel">
+            <div class="theme-detail-label mb-2">Lacunas e inferencias</div>
+            <ul class="ai-list mb-0">
+                {% for item in result.inferencias %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+                {% for item in result.lacunas %}
+                    <li>{{ item }}</li>
+                {% empty %}
+                    <li class="text-secondary">Sem observacoes complementares.</li>
+                {% endfor %}
+            </ul>
         </div>
-
-        <div class="row g-3">
-            <div class="col-12 col-lg-6">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Fatos de apoio</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.fatos %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem fatos adicionais.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col-12 col-lg-6">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Lacunas e inferencias</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.inferencias %}
-                            <li>{{ item }}</li>
-                        {% endfor %}
-                        {% for item in result.lacunas %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem observacoes complementares.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    {% else %}
-        {% include "includes/empty_state.html" with empty_title="Nenhum dado extraido ainda" empty_description="Use a extracao para montar um inventario estruturado de prazos, garantias, vigencia e outros campos criticos." %}
-    {% endif %}
-</article>
+    </div>
+</div>

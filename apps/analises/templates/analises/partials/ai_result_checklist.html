@@ -1,80 +1,65 @@
-<article class="surface-card ai-result-card p-4 h-100">
-    <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mb-4">
-        <div>
-            <p class="eyebrow mb-2">IA</p>
-            <h3 class="h5 mb-1">Checklist analitico</h3>
-            <p class="text-secondary mb-0">Lista acionavel para revisar frentes documental, tecnica, juridica e operacional.</p>
+<div class="ai-rich-text mb-4">{{ result.resumo|linebreaksbr }}</div>
+
+<div class="d-grid gap-3 mb-4">
+    {% for item in result.itens %}
+        <div class="ai-checklist-item">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                <div>
+                    <div class="fw-semibold mb-1">{{ item.titulo }}</div>
+                    <div class="small text-secondary">{{ item.justificativa }}</div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 align-items-start justify-content-lg-end">
+                    {% if item.status == "atendido" %}
+                        {% include "includes/status_badge.html" with tone="success" label="Atende" %}
+                    {% elif item.status == "pendente" %}
+                        {% include "includes/status_badge.html" with tone="warning" label="Nao atende" %}
+                    {% else %}
+                        {% include "includes/status_badge.html" with tone="muted" label="Nao identificado" %}
+                    {% endif %}
+                    {% include "includes/status_badge.html" with tone="info" label=item.categoria %}
+                </div>
+            </div>
         </div>
-        <span class="status-pill status-pill-info">Checklist</span>
+    {% empty %}
+        <div class="ai-mini-panel text-secondary">Nenhum item de checklist foi retornado nesta execucao.</div>
+    {% endfor %}
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-4">
+        <div class="ai-mini-panel">
+            <div class="theme-detail-label mb-2">Fatos</div>
+            <ul class="ai-list mb-0">
+                {% for item in result.fatos %}
+                    <li>{{ item }}</li>
+                {% empty %}
+                    <li class="text-secondary">Sem fatos destacados.</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-
-    {% if result %}
-        <div class="ai-rich-text mb-4">{{ result.resumo|linebreaksbr }}</div>
-
-        <div class="d-grid gap-3 mb-4">
-            {% for item in result.itens %}
-                <div class="ai-checklist-item">
-                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-                        <div>
-                            <div class="fw-semibold mb-1">{{ item.titulo }}</div>
-                            <div class="small text-secondary">{{ item.justificativa }}</div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 align-items-start justify-content-lg-end">
-                            {% if item.status == "atendido" %}
-                                {% include "includes/status_badge.html" with tone="success" label="Atende" %}
-                            {% elif item.status == "pendente" %}
-                                {% include "includes/status_badge.html" with tone="warning" label="Nao atende" %}
-                            {% else %}
-                                {% include "includes/status_badge.html" with tone="muted" label="Nao identificado" %}
-                            {% endif %}
-                            {% include "includes/status_badge.html" with tone="info" label=item.categoria %}
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="ai-mini-panel text-secondary">Nenhum item de checklist foi retornado nesta execucao.</div>
-            {% endfor %}
+    <div class="col-12 col-lg-4">
+        <div class="ai-mini-panel">
+            <div class="theme-detail-label mb-2">Inferencias</div>
+            <ul class="ai-list mb-0">
+                {% for item in result.inferencias %}
+                    <li>{{ item }}</li>
+                {% empty %}
+                    <li class="text-secondary">Sem inferencias adicionais.</li>
+                {% endfor %}
+            </ul>
         </div>
-
-        <div class="row g-3">
-            <div class="col-12 col-lg-4">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Fatos</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.fatos %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem fatos destacados.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col-12 col-lg-4">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Inferencias</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.inferencias %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem inferencias adicionais.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col-12 col-lg-4">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Lacunas</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.lacunas %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem lacunas criticas nesta rodada.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
+    </div>
+    <div class="col-12 col-lg-4">
+        <div class="ai-mini-panel">
+            <div class="theme-detail-label mb-2">Lacunas</div>
+            <ul class="ai-list mb-0">
+                {% for item in result.lacunas %}
+                    <li>{{ item }}</li>
+                {% empty %}
+                    <li class="text-secondary">Sem lacunas criticas nesta rodada.</li>
+                {% endfor %}
+            </ul>
         </div>
-    {% else %}
-        {% include "includes/empty_state.html" with empty_title="Nenhum checklist gerado ainda" empty_description="Clique em 'Gerar checklist' para transformar a leitura do documento em uma lista acionavel de verificacao." %}
-    {% endif %}
-</article>
+    </div>
+</div>

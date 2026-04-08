@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+from .choices import TipoTarefaExecucaoIAChoices
 from .schemas_ai import (
     ChecklistResponse,
     ComparisonResponse,
@@ -95,6 +96,14 @@ TASK_CONFIGS = {
     ),
 }
 
+TIPO_TAREFA_PARA_ANALISE_AI_TASK = {
+    TipoTarefaExecucaoIAChoices.RESUMO: AnaliseAITask.DOCUMENT_SUMMARY,
+    TipoTarefaExecucaoIAChoices.EXTRACAO: AnaliseAITask.DOCUMENT_EXTRACTION,
+    TipoTarefaExecucaoIAChoices.PARECER: AnaliseAITask.TECHNICAL_ANALYSIS,
+    TipoTarefaExecucaoIAChoices.COMPARACAO: AnaliseAITask.DOCUMENT_COMPARISON,
+    TipoTarefaExecucaoIAChoices.CHECKLIST: AnaliseAITask.CHECKLIST_GENERATION,
+}
+
 
 def get_task_config(task: str) -> AnaliseAITaskConfig:
     try:
@@ -112,5 +121,6 @@ __all__ = [
     "OPENAI_DEFAULT_STORE",
     "OPENAI_DEFAULT_TIMEOUT_SECONDS",
     "TASK_CONFIGS",
+    "TIPO_TAREFA_PARA_ANALISE_AI_TASK",
     "get_task_config",
 ]

@@ -9,10 +9,15 @@ from .views import (
 )
 from .views_ai import (
     AnaliseCompararDocumentoView,
+    AnaliseComparacaoResultadoView,
+    AnaliseChecklistResultadoView,
     AnaliseExtrairDadosDocumentoView,
+    AnaliseExtracaoResultadoView,
     AnaliseGerarChecklistView,
     AnaliseGerarParecerView,
     AnaliseGerarResumoDocumentoView,
+    AnaliseParecerResultadoView,
+    AnaliseResumoResultadoView,
 )
 
 app_name = "analises"
@@ -29,9 +34,19 @@ urlpatterns = [
         name="ia_resumo",
     ),
     path(
+        "<int:pk>/ia/resumo/resultado/",
+        AnaliseResumoResultadoView.as_view(),
+        name="ia_resumo_resultado",
+    ),
+    path(
         "<int:pk>/ia/extracao/",
         AnaliseExtrairDadosDocumentoView.as_view(),
         name="ia_extracao",
+    ),
+    path(
+        "<int:pk>/ia/extracao/resultado/",
+        AnaliseExtracaoResultadoView.as_view(),
+        name="ia_extracao_resultado",
     ),
     path(
         "<int:pk>/ia/parecer/",
@@ -39,13 +54,28 @@ urlpatterns = [
         name="ia_parecer",
     ),
     path(
+        "<int:pk>/ia/parecer/resultado/",
+        AnaliseParecerResultadoView.as_view(),
+        name="ia_parecer_resultado",
+    ),
+    path(
         "<int:pk>/ia/comparacao/",
         AnaliseCompararDocumentoView.as_view(),
         name="ia_comparacao",
     ),
     path(
+        "<int:pk>/ia/comparacao/resultado/",
+        AnaliseComparacaoResultadoView.as_view(),
+        name="ia_comparacao_resultado",
+    ),
+    path(
         "<int:pk>/ia/checklist/",
         AnaliseGerarChecklistView.as_view(),
         name="ia_checklist",
+    ),
+    path(
+        "<int:pk>/ia/checklist/resultado/",
+        AnaliseChecklistResultadoView.as_view(),
+        name="ia_checklist_resultado",
     ),
 ]

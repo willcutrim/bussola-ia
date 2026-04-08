@@ -1,20 +1,20 @@
 from datetime import date
-from unittest.mock import patch
+import tempfile
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.tasks import default_task_backend
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from apps.analises.choices import PrioridadeAnaliseChoices, StatusAnaliseChoices
-from apps.analises.models import Analise
-from apps.analises.views_ai import (
-    AnaliseCompararDocumentoView,
-    AnaliseExtrairDadosDocumentoView,
-    AnaliseGerarChecklistView,
-    AnaliseGerarParecerView,
-    AnaliseGerarResumoDocumentoView,
+from apps.analises.choices import (
+    PrioridadeAnaliseChoices,
+    StatusAnaliseChoices,
+    StatusExecucaoIAChoices,
+    TipoTarefaExecucaoIAChoices,
 )
+from apps.analises.models import Analise, AnaliseExecucaoIA
+from config.tasks import ANALISES_AI_QUEUE_NAME
 from apps.documentos.choices import StatusDocumentoChoices, TipoDocumentoChoices
 from apps.documentos.models import Documento
 from apps.empresas.models import Empresa
@@ -22,6 +22,16 @@ from apps.licitacoes.choices import ModalidadeChoices, SituacaoChoices
 from apps.licitacoes.models import Licitacao
 
 
+DUMMY_TASKS = {
+    "default": {
+        "BACKEND": "django.tasks.backends.dummy.DummyBackend",
+        "QUEUES": ["default", ANALISES_AI_QUEUE_NAME],
+    }
+}
+TEST_MEDIA_ROOT = tempfile.mkdtemp(prefix="bussula-analises-tests-")
+
+
+@override_settings(TASKS=DUMMY_TASKS, MEDIA_ROOT=TEST_MEDIA_ROOT)
 class AnaliseAIViewsIntegrationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -66,6 +76,8 @@ class AnaliseAIViewsIntegrationTests(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
+        if hasattr(default_task_backend, "clear"):
+            default_task_backend.clear()
 
     def test_detail_renderiza_workspace_de_ia(self):
         response = self.client.get(reverse("analises:detail", args=[self.analise.pk]))
@@ -74,6 +86,7 @@ class AnaliseAIViewsIntegrationTests(TestCase):
         self.assertContains(response, "Central de analise assistida")
         self.assertContains(response, "Gerar resumo do documento")
         self.assertContains(response, 'id="ai-summary-panel"', html=False)
+        self.assertContains(response, "Sem execucao")
 
     def test_rotas_de_ia_exigem_autenticacao(self):
         self.client.logout()
@@ -85,132 +98,112 @@ class AnaliseAIViewsIntegrationTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-    @patch.object(AnaliseGerarResumoDocumentoView, "ai_service_class")
-    def test_ia_resumo_delega_para_service_com_contexto_da_analise(self, service_class):
-        service_class.return_value.gerar_resumo_documento.return_value = {
-            "resumo_executivo": "Resumo sintetico",
-        }
+    def test_ia_resumo_solicita_execucao_assincrona_e_retorna_202_json(self):
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                reverse("analises:ia_resumo", args=[self.analise.pk]),
+                {"texto_documento": "Conteudo do edital."},
+            )
 
-        response = self.client.post(
-            reverse("analises:ia_resumo", args=[self.analise.pk]),
-            {"texto_documento": "Conteudo do edital."},
+        self.assertEqual(response.status_code, 202)
+        payload = response.json()
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["task_type"], TipoTarefaExecucaoIAChoices.RESUMO)
+        self.assertIn("/analises/", payload["detail_url"])
+        self.assertIn("/resultado/", payload["resultado_url"])
+
+        execucao = AnaliseExecucaoIA.objects.get(pk=payload["execucao_id"])
+        self.assertEqual(execucao.analise, self.analise)
+        self.assertEqual(execucao.status, StatusExecucaoIAChoices.PENDENTE)
+        self.assertEqual(
+            execucao.payload_entrada["texto_documento"],
+            "Conteudo do edital.",
+        )
+        self.assertTrue(execucao.identificador_task)
+
+    def test_ia_resumo_htmx_retorna_card_em_fila(self):
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                reverse("analises:ia_resumo", args=[self.analise.pk]),
+                {"texto_documento": "Conteudo do edital."},
+                HTTP_HX_REQUEST="true",
+            )
+
+        self.assertEqual(response.status_code, 202)
+        self.assertContains(response, "Resumo do documento", status_code=202)
+        self.assertContains(response, "Pendente", status_code=202)
+        self.assertContains(response, "Processando analise...", status_code=202)
+        self.assertContains(
+            response,
+            reverse("analises:ia_resumo_resultado", args=[self.analise.pk]),
+            status_code=202,
+        )
+        self.assertContains(response, 'hx-trigger="every 3s"', status_code=202)
+
+    def test_ia_resumo_reaproveita_execucao_ativa(self):
+        with self.captureOnCommitCallbacks(execute=True):
+            first = self.client.post(
+                reverse("analises:ia_resumo", args=[self.analise.pk]),
+                {"texto_documento": "Conteudo do edital."},
+            )
+
+        with self.captureOnCommitCallbacks(execute=True):
+            second = self.client.post(
+                reverse("analises:ia_resumo", args=[self.analise.pk]),
+                {"texto_documento": "Conteudo do edital."},
+            )
+
+        self.assertEqual(AnaliseExecucaoIA.objects.count(), 1)
+        self.assertEqual(first.json()["execucao_id"], second.json()["execucao_id"])
+        self.assertFalse(second.json()["created"])
+
+    def test_resultado_view_renderiza_resultado_concluido(self):
+        AnaliseExecucaoIA.objects.create(
+            analise=self.analise,
+            tipo_tarefa=TipoTarefaExecucaoIAChoices.RESUMO,
+            status=StatusExecucaoIAChoices.CONCLUIDO,
+            payload_entrada={"texto_documento": "Base"},
+            resultado_payload={
+                "resumo_executivo": "Resumo consolidado",
+                "fatos": ["Fato 1"],
+                "inferencias": [],
+                "lacunas": [],
+            },
+            modelo_utilizado="gpt-5.4-mini",
+            tentativas=1,
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.json()["ok"])
-        self.assertEqual(response.json()["task"], "resumo_documento")
-        self.assertIn("/analises/", response.json()["analise"]["detail_url"])
-        service_class.return_value.gerar_resumo_documento.assert_called_once_with(
-            texto_documento="Conteudo do edital.",
-            documento=self.documento,
-            licitacao=self.licitacao,
-        )
-
-    @patch.object(AnaliseGerarResumoDocumentoView, "ai_service_class")
-    def test_ia_resumo_htmx_retorna_fragmento_html(self, service_class):
-        service_class.return_value.gerar_resumo_documento.return_value = {
-            "resumo_executivo": "Resumo sintetico via HTMX",
-            "fatos": ["Prazo localizado."],
-            "inferencias": [],
-            "lacunas": [],
-        }
-
-        response = self.client.post(
-            reverse("analises:ia_resumo", args=[self.analise.pk]),
-            {"texto_documento": "Conteudo do edital."},
+        response = self.client.get(
+            reverse("analises:ia_resumo_resultado", args=[self.analise.pk]),
             HTTP_HX_REQUEST="true",
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Resumo do documento")
-        self.assertContains(response, "Resumo sintetico via HTMX")
+        self.assertContains(response, "Resumo consolidado")
+        self.assertContains(response, "Concluido")
+        self.assertContains(response, "Reprocessar")
+        self.assertNotContains(response, 'hx-trigger="every 3s"')
 
-    @patch.object(AnaliseExtrairDadosDocumentoView, "ai_service_class")
-    def test_ia_extracao_delega_para_service(self, service_class):
-        service_class.return_value.extrair_dados_documento.return_value = {
-            "campos_extraidos": {},
-        }
-
-        response = self.client.post(
-            reverse("analises:ia_extracao", args=[self.analise.pk]),
-            {
-                "texto_documento": "Conteudo do edital.",
-                "campos_alvo": "prazo,garantia",
-            },
-        )
-
-        self.assertEqual(response.status_code, 200)
-        service_class.return_value.extrair_dados_documento.assert_called_once_with(
-            texto_documento="Conteudo do edital.",
-            documento=self.documento,
-            licitacao=self.licitacao,
-            campos_alvo=["prazo", "garantia"],
-        )
-
-    @patch.object(AnaliseGerarParecerView, "ai_service_class")
-    def test_ia_parecer_persiste_resultado_no_service(self, service_class):
-        service_class.return_value.gerar_parecer_tecnico.return_value = {
-            "parecer_tecnico": "Parecer gerado",
-            "status_sugerido": "em_andamento",
-            "prioridade_sugerida": "alta",
-        }
-
-        response = self.client.post(
-            reverse("analises:ia_parecer", args=[self.analise.pk]),
-            {"texto_documento": "Conteudo tecnico do documento."},
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.json()["persistido"])
-        service_class.return_value.gerar_parecer_tecnico.assert_called_once_with(
-            texto_documento="Conteudo tecnico do documento.",
-            licitacao=self.licitacao,
-            documento=self.documento,
+    def test_resultado_view_renderiza_estado_de_falha(self):
+        AnaliseExecucaoIA.objects.create(
             analise=self.analise,
-            persistir=True,
+            tipo_tarefa=TipoTarefaExecucaoIAChoices.COMPARACAO,
+            status=StatusExecucaoIAChoices.FALHOU,
+            payload_entrada={"texto_documento": "Base"},
+            resultado_payload={},
+            mensagem_erro="Falha controlada.",
+            tentativas=2,
         )
 
-    @patch.object(AnaliseCompararDocumentoView, "ai_service_class")
-    def test_ia_comparacao_delega_para_service(self, service_class):
-        service_class.return_value.comparar_documento_com_licitacao.return_value = {
-            "aderencias": [],
-            "divergencias": [],
-        }
-
-        response = self.client.post(
-            reverse("analises:ia_comparacao", args=[self.analise.pk]),
-            {"texto_documento": "Conteudo comparavel."},
-        )
-
-        self.assertEqual(response.status_code, 200)
-        service_class.return_value.comparar_documento_com_licitacao.assert_called_once_with(
-            texto_documento="Conteudo comparavel.",
-            licitacao=self.licitacao,
-            documento=self.documento,
-        )
-
-    @patch.object(AnaliseGerarChecklistView, "ai_service_class")
-    def test_ia_checklist_delega_para_service(self, service_class):
-        service_class.return_value.gerar_checklist.return_value = {
-            "resumo": "Checklist gerado",
-            "itens": [],
-        }
-
-        response = self.client.post(
-            reverse("analises:ia_checklist", args=[self.analise.pk]),
-            {
-                "texto_documento": "Conteudo base.",
-                "comparison_contexto": '{"divergencias": ["Prazo ausente"]}',
-            },
+        response = self.client.get(
+            reverse("analises:ia_comparacao_resultado", args=[self.analise.pk]),
+            HTTP_HX_REQUEST="true",
         )
 
         self.assertEqual(response.status_code, 200)
-        service_class.return_value.gerar_checklist.assert_called_once_with(
-            texto_documento="Conteudo base.",
-            licitacao=self.licitacao,
-            documento=self.documento,
-            contexto_comparacao={"divergencias": ["Prazo ausente"]},
-        )
+        self.assertContains(response, "Falhou")
+        self.assertContains(response, "Falha controlada.")
+        self.assertContains(response, "Reprocessar")
 
     def test_ia_extracao_retorna_400_quando_texto_nao_e_informado(self):
         response = self.client.post(
@@ -220,17 +213,3 @@ class AnaliseAIViewsIntegrationTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertFalse(response.json()["ok"])
-
-    @patch.object(AnaliseGerarResumoDocumentoView, "ai_service_class")
-    def test_ia_resumo_retorna_400_quando_service_falha_com_erro_previsivel(self, service_class):
-        service_class.return_value.gerar_resumo_documento.side_effect = ValueError(
-            "Falha controlada"
-        )
-
-        response = self.client.post(
-            reverse("analises:ia_resumo", args=[self.analise.pk]),
-            {"texto_documento": "Conteudo do edital."},
-        )
-
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json()["error"], "Falha controlada")

@@ -70,26 +70,16 @@
         <div>
             <p class="eyebrow mb-2">Resultados de IA</p>
             <h2 class="h4 mb-1">Workspace analitico</h2>
-            <p class="text-secondary mb-0">Cada acao atualiza somente o card correspondente, mantendo o restante da leitura intacto.</p>
+            <p class="text-secondary mb-0">Cada acao atualiza somente o card correspondente, com status persistido, polling HTMX e reprocessamento quando necessario.</p>
         </div>
         <div class="topbar-meta-badge d-inline-flex">HTMX ativo para respostas parciais</div>
     </div>
     <div class="row g-3 g-xl-4">
-        <div class="col-12 col-xxl-6" id="ai-summary-panel">
-            {% include "analises/partials/ai_result_resumo.html" with analise=analise %}
-        </div>
-        <div class="col-12 col-xxl-6" id="ai-parecer-panel">
-            {% include "analises/partials/ai_result_parecer.html" with analise=analise %}
-        </div>
-        <div class="col-12 col-xxl-6" id="ai-extraction-panel">
-            {% include "analises/partials/ai_result_extracao.html" with analise=analise %}
-        </div>
-        <div class="col-12 col-xxl-6" id="ai-comparison-panel">
-            {% include "analises/partials/ai_result_comparacao.html" with analise=analise %}
-        </div>
-        <div class="col-12" id="ai-checklist-panel">
-            {% include "analises/partials/ai_result_checklist.html" with analise=analise %}
-        </div>
+        {% for ai_card in ai_cards %}
+            <div class="{{ ai_card.col_class }}" id="{{ ai_card.panel_id }}">
+                {% include "analises/partials/ai_result_container.html" with analise=analise execucao=ai_card.execucao poll_trigger=ai_card.poll_trigger should_poll=ai_card.should_poll resultado_url=ai_card.resultado_url request_url=ai_card.request_url result_template_name=ai_card.result_template_name card_title=ai_card.card_title card_description=ai_card.card_description badge_label=ai_card.badge_label badge_tone_class=ai_card.badge_tone_class empty_title=ai_card.empty_title empty_description=ai_card.empty_description processing_message=ai_card.processing_message allow_reprocess=ai_card.allow_reprocess show_legacy_result=ai_card.show_legacy_result retry_button_label=ai_card.retry_button_label %}
+            </div>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

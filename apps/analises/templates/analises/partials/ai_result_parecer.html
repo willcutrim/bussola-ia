@@ -1,90 +1,85 @@
-<article class="surface-card ai-result-card p-4 h-100">
-    <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mb-4">
-        <div>
-            <p class="eyebrow mb-2">IA</p>
-            <h3 class="h5 mb-1">Parecer tecnico</h3>
-            <p class="text-secondary mb-0">Leitura orientada a decisao, com recomendacoes e status sugerido para a analise.</p>
-        </div>
-        <span class="status-pill status-pill-success">Decisao</span>
-    </div>
-
-    {% if result %}
-        <div class="row g-3 mb-4">
-            <div class="col-12 col-lg-8">
+{% if result %}
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-7">
+            <div class="ai-mini-panel h-100">
+                <div class="theme-detail-label mb-2">Resumo executivo</div>
                 <div class="ai-rich-text">{{ result.parecer_tecnico|linebreaksbr }}</div>
             </div>
-            <div class="col-12 col-lg-4">
-                <div class="ai-mini-panel h-100">
-                    <div class="theme-detail-label mb-2">Sinalizacao</div>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        {% if result.status_sugerido == "em_andamento" %}
-                            {% include "includes/status_badge.html" with tone="primary" label="Em andamento" %}
-                        {% elif result.status_sugerido == "concluida" %}
-                            {% include "includes/status_badge.html" with tone="success" label="Concluida" %}
-                        {% elif result.status_sugerido == "rejeitada" %}
-                            {% include "includes/status_badge.html" with tone="danger" label="Rejeitada" %}
-                        {% else %}
-                            {% include "includes/status_badge.html" with tone="muted" label="Pendente" %}
-                        {% endif %}
+        </div>
+        <div class="col-12 col-lg-5">
+            <div class="ai-mini-panel h-100">
+                <div class="theme-detail-label mb-2">Classificacao sugerida</div>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    {% if result.status_sugerido == "em_andamento" %}
+                        {% include "includes/status_badge.html" with tone="primary" label="Em andamento" %}
+                    {% elif result.status_sugerido == "concluida" %}
+                        {% include "includes/status_badge.html" with tone="success" label="Concluida" %}
+                    {% elif result.status_sugerido == "rejeitada" %}
+                        {% include "includes/status_badge.html" with tone="danger" label="Rejeitada" %}
+                    {% else %}
+                        {% include "includes/status_badge.html" with tone="muted" label="Pendente" %}
+                    {% endif %}
 
-                        {% if result.prioridade_sugerida == "critica" %}
-                            {% include "includes/status_badge.html" with tone="danger" label="Prioridade critica" %}
-                        {% elif result.prioridade_sugerida == "alta" %}
-                            {% include "includes/status_badge.html" with tone="warning" label="Prioridade alta" %}
-                        {% elif result.prioridade_sugerida == "baixa" %}
-                            {% include "includes/status_badge.html" with tone="muted" label="Prioridade baixa" %}
-                        {% else %}
-                            {% include "includes/status_badge.html" with tone="info" label="Prioridade media" %}
-                        {% endif %}
-                    </div>
-                    <div class="small text-secondary mb-0">Esta execucao atualiza o parecer salvo da analise para manter o fluxo coerente com o processo operacional.</div>
+                    {% if result.prioridade_sugerida == "critica" %}
+                        {% include "includes/status_badge.html" with tone="danger" label="Prioridade critica" %}
+                    {% elif result.prioridade_sugerida == "alta" %}
+                        {% include "includes/status_badge.html" with tone="warning" label="Prioridade alta" %}
+                    {% elif result.prioridade_sugerida == "baixa" %}
+                        {% include "includes/status_badge.html" with tone="muted" label="Prioridade baixa" %}
+                    {% else %}
+                        {% include "includes/status_badge.html" with tone="info" label="Prioridade media" %}
+                    {% endif %}
                 </div>
+                <div class="small text-secondary mb-0">Esta execucao atualiza o parecer salvo da analise para manter o fluxo coerente com a operacao.</div>
             </div>
         </div>
+    </div>
 
-        <div class="row g-3">
-            <div class="col-12 col-lg-4">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Fatos</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.fatos %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem fatos destacados.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col-12 col-lg-4">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Riscos e inconsistencias</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.inferencias %}
-                            <li>{{ item }}</li>
-                        {% endfor %}
-                        {% for item in result.lacunas %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem riscos relevantes nesta rodada.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col-12 col-lg-4">
-                <div class="ai-mini-panel">
-                    <div class="theme-detail-label mb-2">Proximos passos</div>
-                    <ul class="ai-list mb-0">
-                        {% for item in result.recomendacoes %}
-                            <li>{{ item }}</li>
-                        {% empty %}
-                            <li class="text-secondary">Sem recomendacoes adicionais.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+    <div class="row g-3">
+        <div class="col-12 col-xl-4">
+            <div class="ai-mini-panel h-100">
+                <div class="theme-detail-label mb-2">Pontos positivos</div>
+                <ul class="ai-list mb-0">
+                    {% for item in result.fatos %}
+                        <li>{{ item }}</li>
+                    {% empty %}
+                        <li class="text-secondary">Sem pontos positivos destacados.</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
-    {% elif analise.parecer %}
-        <div class="ai-rich-text mb-4">{{ analise.parecer|linebreaksbr }}</div>
+        <div class="col-12 col-xl-4">
+            <div class="ai-mini-panel h-100">
+                <div class="theme-detail-label mb-2">Inconsistencias e riscos</div>
+                <ul class="ai-list mb-0">
+                    {% for item in result.inferencias %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                    {% for item in result.lacunas %}
+                        <li>{{ item }}</li>
+                    {% empty %}
+                        <li class="text-secondary">Sem riscos relevantes nesta rodada.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-xl-4">
+            <div class="ai-mini-panel h-100">
+                <div class="theme-detail-label mb-2">Proximos passos</div>
+                <ul class="ai-list mb-0">
+                    {% for item in result.recomendacoes %}
+                        <li>{{ item }}</li>
+                    {% empty %}
+                        <li class="text-secondary">Sem recomendacoes adicionais.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% elif analise.parecer %}
+    <div class="ai-mini-panel">
+        <div class="theme-detail-label mb-2">Parecer salvo na analise</div>
+        <div class="ai-rich-text mb-3">{{ analise.parecer|linebreaksbr }}</div>
         <div class="d-flex flex-wrap gap-2">
             {% if analise.status == "em_andamento" %}
                 {% include "includes/status_badge.html" with tone="primary" label=analise.get_status_display %}
@@ -106,7 +101,5 @@
                 {% include "includes/status_badge.html" with tone="info" label=analise.get_prioridade_display %}
             {% endif %}
         </div>
-    {% else %}
-        {% include "includes/empty_state.html" with empty_title="Nenhum parecer gerado ainda" empty_description="Execute o parecer tecnico para registrar riscos, proxima acao e classificacao sugerida." %}
-    {% endif %}
-</article>
+    </div>
+{% endif %}

@@ -1,9 +1,10 @@
 from datetime import date
+import tempfile
 from unittest.mock import Mock
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from apps.analises.choices import PrioridadeAnaliseChoices, StatusAnaliseChoices
 from apps.analises.constants import AnaliseAITask, get_task_config
@@ -25,6 +26,10 @@ from apps.licitacoes.choices import ModalidadeChoices, SituacaoChoices
 from apps.licitacoes.models import Licitacao
 
 
+TEST_MEDIA_ROOT = tempfile.mkdtemp(prefix="bussula-analises-tests-")
+
+
+@override_settings(MEDIA_ROOT=TEST_MEDIA_ROOT)
 class AnaliseAIServiceIntegrationTests(TestCase):
     @classmethod
     def setUpTestData(cls):

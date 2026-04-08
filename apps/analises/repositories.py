@@ -2,8 +2,8 @@ from django.db.models import Count
 
 from apps.core.repositories import BaseRepository
 
-from .choices import StatusAnaliseChoices
-from .models import Analise
+from .choices import StatusAnaliseChoices, StatusExecucaoIAChoices
+from .models import Analise, AnaliseExecucaoIA
 
 
 class AnaliseRepository(BaseRepository):
@@ -103,3 +103,48 @@ class AnaliseRepository(BaseRepository):
 
     def total_por_licitacao(self, licitacao):
         return self.listar_por_licitacao(licitacao).count()
+
+
+class AnaliseExecucaoIARepository(BaseRepository):
+    model = AnaliseExecucaoIA
+
+    def get_queryset(self):
+        return super().get_queryset().select_related(
+            "analise",
+            "analise__licitacao",
+            "analise__documento",
+            "analise__responsavel",
+        )
+
+    def obter_por_id(self, pk):
+        return self.get_by_id(pk)
+
+    def obter_ativa_por_analise_e_tipo(self, analise, tipo_tarefa):
+        analise_id = getattr(analise, "pk", analise)
+        return (
+            self.get_queryset()
+            .filter(
+                analise_id=analise_id,
+                tipo_tarefa=tipo_tarefa,
+                status__in=(
+                    StatusExecucaoIAChoices.PENDENTE,
+                    StatusExecucaoIAChoices.EM_PROCESSAMENTO,
+                ),
+            )
+            .first()
+        )
+
+    def listar_por_analise(self, analise):
+        analise_id = getattr(analise, "pk", analise)
+        return self.get_queryset().filter(analise_id=analise_id)
+
+    def listar_ultimas_por_tipo(self, analise):
+        execucoes = self.listar_por_analise(analise).order_by(
+            "tipo_tarefa",
+            "-solicitada_em",
+            "-created_at",
+        )
+        ultimas_execucoes: dict[str, AnaliseExecucaoIA] = {}
+        for execucao in execucoes:
+            ultimas_execucoes.setdefault(execucao.tipo_tarefa, execucao)
+        return ultimas_execucoes

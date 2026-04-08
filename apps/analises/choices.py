@@ -13,3 +13,18 @@ class PrioridadeAnaliseChoices(models.TextChoices):
     MEDIA = "media", "Media"
     ALTA = "alta", "Alta"
     CRITICA = "critica", "Critica"
+
+
+class StatusExecucaoIAChoices(models.TextChoices):
+    PENDENTE = "pendente", "Pendente"
+    EM_PROCESSAMENTO = "em_processamento", "Em processamento"
+    CONCLUIDO = "concluido", "Concluido"
+    FALHOU = "falhou", "Falhou"
+
+
+class TipoTarefaExecucaoIAChoices(models.TextChoices):
+    RESUMO = "resumo", "Resumo"
+    EXTRACAO = "extracao", "Extracao"
+    PARECER = "parecer", "Parecer"
+    COMPARACAO = "comparacao", "Comparacao"
+    CHECKLIST = "checklist", "Checklist"

@@ -16,6 +16,18 @@ from apps.analises.constants import (
 )
 
 
+class AIIntegrationError(Exception):
+    """Falha generica da borda externa de IA."""
+
+
+class AITransientError(AIIntegrationError):
+    """Falha transitoria passivel de retry."""
+
+
+class AIPermanentError(AIIntegrationError):
+    """Falha permanente que nao deve ser reprocessada automaticamente."""
+
+
 @dataclass(frozen=True)
 class OpenAIClientConfig:
     api_key: str | None
@@ -61,28 +73,39 @@ class AnaliseOpenAIClient:
     ) -> AIResponsePayload:
         client = self._get_client()
         resolved_model = model or task_config.model
-        response = client.responses.parse(
-            model=resolved_model,
-            instructions=prompt.system_prompt,
-            input=prompt.user_prompt,
-            max_output_tokens=task_config.max_output_tokens,
-            store=self.config.store,
-            reasoning={"effort": task_config.reasoning_effort}
-            if task_config.reasoning_effort
-            else None,
-            text_format=task_config.response_schema,
-            metadata=self._build_metadata(prompt),
-            verbosity=task_config.verbosity,
-        )
+        try:
+            response = client.responses.parse(
+                model=resolved_model,
+                instructions=prompt.system_prompt,
+                input=prompt.user_prompt,
+                max_output_tokens=task_config.max_output_tokens,
+                store=self.config.store,
+                reasoning={"effort": task_config.reasoning_effort}
+                if task_config.reasoning_effort
+                else None,
+                text_format=task_config.response_schema,
+                metadata=self._build_metadata(prompt),
+                verbosity=task_config.verbosity,
+            )
+        except Exception as exc:
+            if self._is_transient_error(exc):
+                raise AITransientError(
+                    "A integracao de IA encontrou uma falha temporaria."
+                ) from exc
+            raise AIPermanentError(
+                "A integracao de IA nao conseguiu processar a resposta."
+            ) from exc
 
         parsed = getattr(response, "output_parsed", None)
         if parsed is None:
-            raise ValueError("A resposta estruturada da IA nao retornou payload parseavel.")
+            raise AIPermanentError(
+                "A resposta estruturada da IA nao retornou payload parseavel."
+            )
 
         return AIResponsePayload(
             task=prompt.task,
             model=resolved_model,
-            text=getattr(response, "output_text", "").strip(),
+            text=(getattr(response, "output_text", "") or "").strip(),
             parsed=parsed,
             response_id=getattr(response, "id", None),
         )
@@ -127,9 +150,21 @@ class AnaliseOpenAIClient:
                 metadata[str(key)] = str(value)
         return metadata
 
+    def _is_transient_error(self, exc: Exception) -> bool:
+        error_name = type(exc).__name__
+        return error_name in {
+            "APIConnectionError",
+            "APITimeoutError",
+            "RateLimitError",
+            "InternalServerError",
+        }
+
 
 __all__ = [
+    "AIIntegrationError",
     "AIResponsePayload",
+    "AIPermanentError",
     "AnaliseOpenAIClient",
+    "AITransientError",
     "OpenAIClientConfig",
 ]
