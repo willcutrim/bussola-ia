@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_header.html" with eyebrow="Empresas" title=page_title subtitle=page_subtitle secondary_action_url="/empresas/" secondary_action_label="Voltar" %}
+
+<section class="surface-card p-4 p-xl-5 mx-auto" style="max-width: 42rem;">
+    <p class="eyebrow mb-2">Confirmacao</p>
+    <h2 class="h3 mb-3">Excluir {{ object.nome }}</h2>
+    <p class="text-secondary mb-4">Ao confirmar, a empresa deixa de aparecer na visao principal. Revise se nao existem licitacoes ou contatos que ainda dependem deste cadastro.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
+            <a class="btn btn-outline-light" href="{% url 'empresas:detail' object.pk %}">Cancelar</a>
+            <button class="btn btn-danger" type="submit">Confirmar exclusao</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

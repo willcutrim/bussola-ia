@@ -1,0 +1,27 @@
+<section class="surface-card page-header-card mb-4 p-4 p-xl-5">
+    {% firstof status "" as resolved_status %}
+    <div class="row g-3 align-items-center">
+        <div class="col-12 col-xl">
+            {% if eyebrow %}
+                <p class="eyebrow mb-2">{{ eyebrow }}</p>
+            {% endif %}
+            <h2 class="h3 mb-2">{{ title }}</h2>
+            {% if subtitle %}
+                <p class="text-secondary mb-0 col-12 col-xxl-8">{{ subtitle }}</p>
+            {% endif %}
+        </div>
+        <div class="col-12 col-xl-auto">
+            <div class="d-flex flex-wrap gap-2 justify-content-xl-end">
+                {% if resolved_status %}
+                    {% include "includes/status_badge.html" with status=resolved_status %}
+                {% endif %}
+                {% if secondary_action_url and secondary_action_label %}
+                    <a class="btn btn-outline-light" href="{{ secondary_action_url }}">{{ secondary_action_label }}</a>
+                {% endif %}
+                {% if primary_action_url and primary_action_label %}
+                    <a class="btn btn-primary" href="{{ primary_action_url }}">{{ primary_action_label }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

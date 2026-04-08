@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-shell">
+    {% include "dashboard/partials/_hero.html" %}
+    {% include "dashboard/partials/_kpis.html" %}
+
+    <div class="row g-4 g-xxl-5 mb-4 mb-xl-5">
+        <div class="col-12 col-xl-8">
+            {% include "dashboard/partials/_pipeline.html" %}
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="d-grid gap-4">
+                {% include "dashboard/partials/_quick_actions.html" %}
+                {% include "dashboard/partials/_insights.html" %}
+                {% include "dashboard/partials/_summary.html" %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 g-xxl-5">
+        <div class="col-12 col-xl-7">
+            {% include "dashboard/partials/_recent_licitacoes.html" %}
+        </div>
+
+        <div class="col-12 col-xl-5">
+            {% include "dashboard/partials/_recent_empresas.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% url 'accounts:create' as accounts_create_url %}
+{% include "includes/page_header.html" with eyebrow="Accounts" title=page_title subtitle=page_subtitle primary_action_url=accounts_create_url primary_action_label="Novo usuario" %}
+
+<div class="row g-3 g-xl-4 mb-4">
+    {% for item in accounts_kpis %}
+        <div class="col-12 col-sm-6 col-xl-3">
+            {% include "includes/kpi_card.html" with title=item.title value=item.value helper=item.helper tone=item.tone icon=item.icon %}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xxl-8">
+        {% include "accounts/_filters.html" %}
+        {% include "accounts/_table.html" %}
+    </div>
+    <div class="col-12 col-xxl-4">
+        {% include "accounts/_form.html" %}
+    </div>
+</div>

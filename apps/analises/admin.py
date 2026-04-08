@@ -1,0 +1,28 @@
+from django.contrib import admin
+
+from apps.core.admin import BaseModelAdmin
+
+from .models import Analise
+
+
+@admin.register(Analise)
+class AnaliseAdmin(BaseModelAdmin):
+    list_display = (
+        "titulo",
+        "licitacao",
+        "documento",
+        "status",
+        "prioridade",
+        "responsavel",
+        "data_analise",
+    )
+    search_fields = (
+        "titulo",
+        "licitacao__numero",
+        "documento__nome",
+        "responsavel__username",
+        "responsavel__email",
+    )
+    list_filter = ("status", "prioridade", "data_analise")
+    list_select_related = ("licitacao", "documento", "responsavel")
+    ordering = ("-data_analise",)

@@ -1,0 +1,39 @@
+<section class="surface-card p-4 mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+            <p class="eyebrow mb-2">Filtros</p>
+            <h2 class="h5 mb-0">Buscar empresas</h2>
+        </div>
+        <button class="btn btn-outline-light d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#empresas-filtros" aria-expanded="true" aria-controls="empresas-filtros">
+            Mostrar filtros
+        </button>
+    </div>
+
+    <div class="collapse show" id="empresas-filtros">
+        <form method="get">
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-xl-5">
+                    <label class="form-label mb-2" for="id_nome">Nome</label>
+                    <input class="form-control" id="id_nome" type="text" name="nome" value="{{ filtros.nome }}" placeholder="Razao social ou nome fantasia">
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label mb-2" for="id_cnpj">CNPJ</label>
+                    <input class="form-control" id="id_cnpj" type="text" name="cnpj" value="{{ filtros.cnpj }}" placeholder="00.000.000/0000-00" data-mask="cnpj" inputmode="numeric">
+                </div>
+                <div class="col-12 col-md-6 col-xl-2">
+                    <label class="form-label mb-2" for="id_ativa">Situacao</label>
+                    <select class="form-select" id="id_ativa" name="ativa">
+                        <option value="">Todas</option>
+                        <option value="true" {% if filtros.ativa == "true" %}selected{% endif %}>Ativas</option>
+                        <option value="false" {% if filtros.ativa == "false" %}selected{% endif %}>Inativas</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+                <a class="btn btn-outline-light" href="{% url 'empresas:index' %}">Limpar</a>
+                <button class="btn btn-primary" type="submit">Filtrar</button>
+            </div>
+        </form>
+    </div>
+</section>

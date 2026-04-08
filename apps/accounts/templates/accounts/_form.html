@@ -1,0 +1,28 @@
+{% url 'accounts:create' as accounts_create_url %}
+<section class="surface-card p-4">
+    <p class="eyebrow mb-2">Operacao</p>
+    <h2 class="h5 mb-3">Gestao de acessos</h2>
+    <div class="d-grid gap-3">
+        <a class="quick-action quick-action-primary" href="{{ accounts_create_url }}">
+            <span class="quick-action-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                </svg>
+            </span>
+            <span>
+                <strong>Novo usuario</strong>
+                <small>Adicionar um novo acesso administrativo ou operacional.</small>
+            </span>
+        </a>
+
+        <div class="account-side-note">
+            <div class="fw-semibold mb-1">Boas praticas</div>
+            <div class="small text-secondary">Ative apenas quem realmente precisa acessar o painel e use a troca obrigatoria de senha quando houver redistribuicao de conta.</div>
+        </div>
+
+        <div class="account-side-note">
+            <div class="fw-semibold mb-1">Governanca</div>
+            <div class="small text-secondary">Mantenha `is_staff` restrito ao time interno e deixe superusuarios apenas para administracao tecnica.</div>
+        </div>
+    </div>
+</section>

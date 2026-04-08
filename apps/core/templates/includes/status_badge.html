@@ -1,0 +1,21 @@
+{% if tone %}
+    <span class="status-pill status-pill-{{ tone }}">
+        {% firstof label status "Sem status" %}
+    </span>
+{% elif status == "estrutura_pronta" %}
+    <span class="status-pill status-pill-info">Estrutura pronta</span>
+{% elif status == "em_construcao" %}
+    <span class="status-pill status-pill-warning">Em construcao</span>
+{% elif status == "rascunho" %}
+    <span class="status-pill status-pill-muted">Rascunho</span>
+{% elif status == "em_analise" %}
+    <span class="status-pill status-pill-warning">Em analise</span>
+{% elif status == "em_andamento" %}
+    <span class="status-pill status-pill-primary">Em andamento</span>
+{% elif status == "encerrada" %}
+    <span class="status-pill status-pill-success">Encerrada</span>
+{% elif status == "cancelada" %}
+    <span class="status-pill status-pill-danger">Cancelada</span>
+{% else %}
+    <span class="status-pill status-pill-muted">{% firstof label status "Sem status" %}</span>
+{% endif %}

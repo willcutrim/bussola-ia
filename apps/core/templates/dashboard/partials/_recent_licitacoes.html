@@ -1,0 +1,42 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 h-100">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Pipeline ativo</span>
+            <h2 class="h4 mb-1">Ultimas licitacoes</h2>
+            <p class="text-secondary mb-0">Acompanhe entradas recentes e abra rapidamente as oportunidades mais quentes.</p>
+        </div>
+        <a class="btn btn-outline-light rounded-4 btn-sm" href="{% url 'licitacoes:index' %}">Ver todas</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle theme-table dashboard-table">
+            <thead>
+                <tr>
+                    <th>Numero</th>
+                    <th class="d-none d-lg-table-cell">Orgao</th>
+                    <th>Situacao</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for licitacao in dashboard.licitacoes_recentes %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ licitacao.numero }}</div>
+                            <div class="small text-secondary text-truncate" style="max-width: 18rem;">{{ licitacao.objeto }}</div>
+                        </td>
+                        <td class="d-none d-lg-table-cell">{{ licitacao.orgao }}</td>
+                        <td>{% include "includes/status_badge.html" with status=licitacao.situacao %}</td>
+                        <td class="text-end">
+                            <a class="btn btn-outline-light btn-sm rounded-4" href="{% url 'licitacoes:detail' licitacao.pk %}">Abrir</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">{% include "includes/empty_state.html" with empty_title="Nenhuma licitacao recente" empty_description="Cadastre a primeira oportunidade para ativar a linha do tempo do painel." %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>

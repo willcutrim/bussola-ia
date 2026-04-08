@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_intro.html" with page_eyebrow="Analises" %}
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xxl-8">
+        {% include "analises/_filters.html" %}
+        {% include "analises/_table.html" %}
+    </div>
+    <div class="col-12 col-xxl-4">
+        {% include "analises/_form.html" %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<section class="surface-card p-4 p-xl-5">
+    <div class="mb-3">
+        <p class="eyebrow mb-2">Fila</p>
+        <h2 class="h4 mb-0">Analises pendentes</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle theme-table">
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th class="d-none d-md-table-cell">Tipo</th>
+                    <th class="d-none d-lg-table-cell">Responsavel</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4">
+                        {% include "analises/empty_state.html" with empty_title="Nenhuma analise pendente" empty_description="Mantenha esta tabela como ponto central do fluxo quando a execucao real for adicionada." %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>

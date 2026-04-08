@@ -1,0 +1,90 @@
+{% with current_app=request.resolver_match.app_name current_url=request.resolver_match.url_name %}
+<div class="sidebar-shell d-flex h-100 flex-column p-3 p-xl-4">
+    <div class="d-flex align-items-center gap-3 mb-4 pb-2 border-bottom border-secondary-subtle">
+        <div class="sidebar-brand-mark">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2 4 6v5c0 5.2 3.4 10 8 11 4.6-1 8-5.8 8-11V6l-8-4Z" fill="currentColor"/>
+                <path d="M9 12.2 11 14l4-4" fill="none" stroke="var(--bsla-bg)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            </svg>
+        </div>
+        <div>
+            <a class="sidebar-brand-title" href="{% url 'home' %}">Bussola</a>
+            <p class="sidebar-brand-subtitle mb-0">Inteligencia em licitacoes</p>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <p class="nav-section-label mb-2">Painel</p>
+        <nav class="nav flex-column gap-1">
+            <a class="nav-link sidebar-link {% if current_url == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 13h7V4H4v9Zm0 7h7v-5H4v5Zm9 0h7V11h-7v9Zm0-18v7h7V2h-7Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Painel executivo
+            </a>
+        </nav>
+    </div>
+
+    <div class="mb-4">
+        <p class="nav-section-label mb-2">Operacao</p>
+        <nav class="nav flex-column gap-1">
+            <a class="nav-link sidebar-link {% if current_app == 'licitacoes' %}active{% endif %}" href="{% url 'licitacoes:index' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 4h12l2 4-8 12L4 8l2-4Zm1.2 4 4.8 7.2L16.8 8H7.2Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Licitacoes
+            </a>
+            <a class="nav-link sidebar-link {% if current_app == 'analises' %}active{% endif %}" href="{% url 'analises:list' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 5h14v14H5V5Zm3 3v8h2V8H8Zm4 2v6h2v-6h-2Zm4-3v9h2V7h-2Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Analises
+            </a>
+            <a class="nav-link sidebar-link {% if current_app == 'documentos' %}active{% endif %}" href="{% url 'documentos:index' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 3h7l5 5v13H7V3Zm7 1.5V9h4.5L14 4.5Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Documentos
+            </a>
+        </nav>
+    </div>
+
+    <div class="mb-4">
+        <p class="nav-section-label mb-2">Cadastros</p>
+        <nav class="nav flex-column gap-1">
+            <a class="nav-link sidebar-link {% if current_app == 'empresas' and current_url != 'contato_list' %}active{% endif %}" href="{% url 'empresas:index' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 20h16v-2H4v2Zm2-4h3V4H6v12Zm5 0h3V8h-3v8Zm5 0h2V2h-2v14Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Empresas
+            </a>
+            <a class="nav-link sidebar-link {% if current_app == 'empresas' and current_url == 'contato_list' %}active{% endif %}" href="{% url 'empresas:contato_list' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.4 0-8 2-8 4.5V21h16v-2.5C20 16 16.4 14 12 14Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Contatos
+            </a>
+            <a class="nav-link sidebar-link {% if current_app == 'accounts' %}active{% endif %}" href="{% url 'accounts:list' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-8 9v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1H4Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Accounts
+            </a>
+        </nav>
+    </div>
+</div>
+{% endwith %}

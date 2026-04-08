@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% url 'accounts:update' usuario.pk as user_update_url %}
+{% url 'accounts:list' as accounts_list_url %}
+{% include "includes/page_header.html" with eyebrow="Accounts" title=usuario.nome_completo|default:usuario.username subtitle=usuario.email primary_action_url=user_update_url primary_action_label="Editar usuario" secondary_action_url=accounts_list_url secondary_action_label="Voltar" %}
+
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xl-8">
+        <section class="surface-card p-4 p-xl-5 h-100">
+            <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="account-user-avatar account-user-avatar-lg">
+                        {{ usuario.nome_completo|default:usuario.username|slice:":1"|upper }}
+                    </span>
+                    <div>
+                        <p class="eyebrow mb-2">Conta</p>
+                        <h2 class="h4 mb-1">Visao geral do usuario</h2>
+                        <p class="text-secondary mb-0">@{{ usuario.username }}</p>
+                    </div>
+                </div>
+                {% if usuario.ativo %}
+                    {% include "includes/status_badge.html" with tone="success" label="Ativo" %}
+                {% else %}
+                    {% include "includes/status_badge.html" with tone="muted" label="Inativo" %}
+                {% endif %}
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Username</span>
+                    <div>{{ usuario.username }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">E-mail</span>
+                    <div>{{ usuario.email }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Nome completo</span>
+                    <div>{{ usuario.nome_completo|default:"Nao informado" }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Telefone</span>
+                    <div>{{ usuario.telefone|default:"Nao informado" }}</div>
+                </div>
+                <div class="col-12">
+                    <div class="account-access-strip">
+                        <div class="account-access-item">
+                            <span class="theme-detail-label d-block mb-2">Equipe interna</span>
+                            <strong>{% if usuario.is_staff %}Sim{% else %}Nao{% endif %}</strong>
+                        </div>
+                        <div class="account-access-item">
+                            <span class="theme-detail-label d-block mb-2">Superusuario</span>
+                            <strong>{% if usuario.is_superuser %}Sim{% else %}Nao{% endif %}</strong>
+                        </div>
+                        <div class="account-access-item">
+                            <span class="theme-detail-label d-block mb-2">Troca de senha</span>
+                            <strong>{% if usuario.deve_trocar_senha %}Pendente{% else %}Regular{% endif %}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="d-grid gap-3 gap-xl-4">
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Permissoes</p>
+                <h2 class="h5 mb-3">Flags de acesso</h2>
+                <div class="d-grid gap-3">
+                    <div class="summary-item pt-0">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Equipe interna</span>
+                            <strong>{% if usuario.is_staff %}Sim{% else %}Nao{% endif %}</strong>
+                        </div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Superusuario</span>
+                            <strong>{% if usuario.is_superuser %}Sim{% else %}Nao{% endif %}</strong>
+                        </div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Troca de senha</span>
+                            <strong>{% if usuario.deve_trocar_senha %}Pendente{% else %}Nao{% endif %}</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Acoes</p>
+                <h2 class="h5 mb-3">Gestao da conta</h2>
+                <div class="d-grid gap-2">
+                    <a class="btn btn-primary" href="{% url 'accounts:update' usuario.pk %}">Editar usuario</a>
+                    <a class="btn btn-outline-light" href="{% url 'accounts:delete' usuario.pk %}">Excluir conta</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

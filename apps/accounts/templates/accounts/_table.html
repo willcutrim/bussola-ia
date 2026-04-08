@@ -1,0 +1,82 @@
+<section class="surface-card p-4 p-xl-5">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+            <p class="eyebrow mb-2">Governanca</p>
+            <h2 class="h4 mb-0">Usuarios e acessos</h2>
+        </div>
+        <div class="small text-secondary">{{ paginator.count|default:0 }} registros</div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle theme-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th class="d-none d-lg-table-cell">E-mail</th>
+                    <th>Perfil</th>
+                    <th>Status</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="account-user-avatar">
+                                    {{ usuario.nome_completo|default:usuario.username|slice:":1"|upper }}
+                                </span>
+                                <div>
+                                    <div class="fw-semibold">{{ usuario.nome_completo|default:usuario.username }}</div>
+                                    <div class="small text-secondary">@{{ usuario.username }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="d-none d-lg-table-cell">{{ usuario.email }}</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if usuario.is_superuser %}
+                                    {% include "includes/status_badge.html" with tone="warning" label="Superusuario" %}
+                                {% elif usuario.is_staff %}
+                                    {% include "includes/status_badge.html" with tone="info" label="Administrativo" %}
+                                {% else %}
+                                    {% include "includes/status_badge.html" with tone="muted" label="Operacional" %}
+                                {% endif %}
+                                {% if usuario.deve_trocar_senha %}
+                                    {% include "includes/status_badge.html" with tone="warning" label="Troca pendente" %}
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if usuario.ativo %}
+                                {% include "includes/status_badge.html" with tone="success" label="Ativo" %}
+                            {% else %}
+                                {% include "includes/status_badge.html" with tone="muted" label="Inativo" %}
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-sm table-actions-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Ações
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end table-actions-menu">
+                                    <li><a class="dropdown-item" href="{% url 'accounts:detail' usuario.pk %}">Ver detalhes</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'accounts:update' usuario.pk %}">Editar</a></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'accounts:delete' usuario.pk %}">Excluir</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            {% include "accounts/empty_state.html" with empty_title="Nenhuma conta cadastrada" empty_description="Crie o primeiro usuario para estruturar perfis, acessos e governanca do modulo." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "includes/pagination.html" %}
+</section>

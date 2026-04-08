@@ -1,0 +1,53 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Inteligencia do sistema</span>
+            <h2 class="h5 mb-1">Insights da IA</h2>
+            <p class="text-secondary small mb-0">Leituras orientadas pelos dados atuais do pipeline.</p>
+        </div>
+        <span class="dashboard-chip dashboard-chip-primary">Assistente ativo</span>
+    </div>
+
+    <div class="d-grid gap-3">
+        <article class="insight-card insight-card-warning">
+            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                <span class="dashboard-chip dashboard-chip-warning">Alerta</span>
+                <span class="insight-card-score">{{ dashboard.total_em_analise }}</span>
+            </div>
+            <h3 class="h6 mb-2">Prazo critico se aproximando</h3>
+            <p class="mb-0">Existem {{ dashboard.total_em_analise }} licitacoes em analise aguardando decisao. Vale revisar prazos e documentos primeiro.</p>
+        </article>
+
+        <article class="insight-card insight-card-primary">
+            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                <span class="dashboard-chip dashboard-chip-primary">Tendencia</span>
+                <span class="insight-card-score">{{ dashboard.total_licitacoes_ativas }}</span>
+            </div>
+            <h3 class="h6 mb-2">Alta tracao nas oportunidades ativas</h3>
+            <p class="mb-0">
+                {{ dashboard.total_licitacoes_ativas }} oportunidades seguem em movimento.
+                {% if dashboard.licitacoes_recentes %}
+                    A mais recente entrou como {{ dashboard.licitacoes_recentes.0.numero }} para {{ dashboard.licitacoes_recentes.0.orgao }}.
+                {% else %}
+                    Mantenha o ritmo para alimentar o funil com novos editais.
+                {% endif %}
+            </p>
+        </article>
+
+        <article class="insight-card insight-card-success">
+            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                <span class="dashboard-chip dashboard-chip-success">Capacidade</span>
+                <span class="insight-card-score">{{ dashboard.total_empresas_ativas }}</span>
+            </div>
+            <h3 class="h6 mb-2">Base comercial pronta para competir</h3>
+            <p class="mb-0">
+                {{ dashboard.total_empresas_ativas }} empresas estao ativas hoje.
+                {% if dashboard.empresas_recentes %}
+                    {{ dashboard.empresas_recentes.0.nome }} entrou por ultimo e pode reforcar a cobertura comercial.
+                {% else %}
+                    Novos cadastros fortalecem a previsibilidade das disputas.
+                {% endif %}
+            </p>
+        </article>
+    </div>
+</section>

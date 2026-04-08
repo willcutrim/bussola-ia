@@ -1,0 +1,63 @@
+{% with current_app=request.resolver_match.app_name current_url=request.resolver_match.url_name %}
+<header class="topbar-shell sticky-top">
+    <div class="container-fluid app-content-frame px-3 px-lg-4 px-xxl-5">
+        <div class="topbar-card d-flex flex-wrap align-items-center justify-content-between gap-3 px-3 px-lg-4 py-3">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-theme-ghost d-inline-flex d-lg-none align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar" aria-controls="appSidebar" aria-label="Abrir menu">
+                    <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                    </svg>
+                </button>
+
+                <div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                        <span class="topbar-kicker">Navegacao</span>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb small mb-0">
+                                <li class="breadcrumb-item"><a href="{% url 'home' %}">Painel</a></li>
+                                {% if current_app %}
+                                    <li class="breadcrumb-item">
+                                        {% if current_app == "licitacoes" %}Licitacoes{% elif current_app == "empresas" %}Empresas{% elif current_app == "analises" %}Analises{% elif current_app == "documentos" %}Documentos{% elif current_app == "accounts" %}Accounts{% else %}Modulo{% endif %}
+                                    </li>
+                                {% endif %}
+                                {% if current_url != "home" %}
+                                    <li class="breadcrumb-item active" aria-current="page">{{ page_title|default:"Visao geral" }}</li>
+                                {% endif %}
+                            </ol>
+                        </nav>
+                    </div>
+                    {% if current_url != "home" %}
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <h1 class="h6 mb-0">{{ page_title|default:"Bussola" }}</h1>
+                        </div>
+                        {% if page_subtitle %}
+                            <p class="small text-secondary mb-0 d-none d-md-block">{{ page_subtitle }}</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="topbar-home-note mb-0">Visao consolidada da operacao comercial e das oportunidades priorizadas.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                <span class="topbar-meta-badge d-none d-lg-inline-flex">{% now "d/m/Y" %}</span>
+
+                {% if page_primary_action_url and page_primary_action_label %}
+                    <a class="btn btn-primary d-none d-sm-inline-flex" href="{{ page_primary_action_url }}">{{ page_primary_action_label }}</a>
+                {% endif %}
+
+                {% if request.user.is_authenticated %}
+                    <form method="post" action="{% url 'accounts:logout' %}" class="d-none d-md-block mb-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-theme-ghost">Sair</button>
+                    </form>
+                {% endif %}
+
+                <div class="theme-avatar">
+                    {{ request.user.get_full_name|default:request.user.username|default:"BS"|slice:":1"|upper }}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+{% endwith %}

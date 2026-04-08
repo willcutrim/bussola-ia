@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_header.html" with eyebrow="Empresas" title=empresa.nome subtitle=empresa.razao_social|default:empresa.nome_fantasia primary_action_url=page_primary_action_url primary_action_label=page_primary_action_label secondary_action_url="/empresas/" secondary_action_label="Voltar" %}
+
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xl-8">
+        <section class="surface-card p-4 p-xl-5 h-100">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <div>
+                    <p class="eyebrow mb-2">Dados principais</p>
+                    <h2 class="h4 mb-0">Visao geral da empresa</h2>
+                </div>
+                {% if empresa.ativa %}
+                    {% include "includes/status_badge.html" with tone="success" label="Ativa" %}
+                {% else %}
+                    {% include "includes/status_badge.html" with tone="muted" label="Inativa" %}
+                {% endif %}
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Nome fantasia</span>
+                    <div>{{ empresa.nome_fantasia|default:"Nao informado" }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">CNPJ</span>
+                    <div>{{ empresa.cnpj|default:"Nao informado" }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">E-mail</span>
+                    <div>{{ empresa.email|default:"Nao informado" }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Telefone</span>
+                    <div>{{ empresa.telefone|default:"Nao informado" }}</div>
+                </div>
+                <div class="col-12">
+                    <span class="theme-detail-label d-block mb-2">Site</span>
+                    {% if empresa.site %}
+                        <a class="link-info" href="{{ empresa.site }}" target="_blank" rel="noopener noreferrer">{{ empresa.site }}</a>
+                    {% else %}
+                        <div class="text-secondary">Nao informado</div>
+                    {% endif %}
+                </div>
+                <div class="col-12">
+                    <span class="theme-detail-label d-block mb-2">Observacoes</span>
+                    <div class="text-secondary">{{ empresa.observacoes|default:"Sem observacoes adicionais."|linebreaksbr }}</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="d-grid gap-3 gap-xl-4">
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Endereco</p>
+                <h2 class="h5 mb-3">Localizacao</h2>
+                {% if empresa.endereco %}
+                    <div class="d-grid gap-2">
+                        <div>{{ empresa.endereco.logradouro }}, {{ empresa.endereco.numero|default:"s/n" }}</div>
+                        <div class="text-secondary">{{ empresa.endereco.bairro }}{% if empresa.endereco.complemento %} • {{ empresa.endereco.complemento }}{% endif %}</div>
+                        <div>{{ empresa.endereco.cidade }}/{{ empresa.endereco.estado }}</div>
+                        <div class="text-secondary">{{ empresa.endereco.cep|default:"CEP nao informado" }}</div>
+                    </div>
+                {% else %}
+                    {% include "includes/empty_state.html" with empty_title="Endereco nao cadastrado" empty_description="Use o formulario de endereco para complementar os dados da empresa." %}
+                {% endif %}
+            </section>
+
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Contatos</p>
+                <h2 class="h5 mb-3">Relacionamento ativo</h2>
+                <div class="d-grid gap-3">
+                    {% for contato in empresa.contatos.all|slice:":3" %}
+                        <div class="summary-item {% if not forloop.first %}pt-3{% endif %}">
+                            <div class="fw-semibold">{{ contato.nome }}</div>
+                            <div class="small text-secondary">{{ contato.cargo|default:"Sem cargo definido" }}</div>
+                            <div class="small text-secondary">{{ contato.email|default:contato.telefone|default:"Sem canal principal" }}</div>
+                        </div>
+                    {% empty %}
+                        {% include "includes/empty_state.html" with empty_title="Sem contatos" empty_description="Cadastre contatos para centralizar a comunicação com esta empresa." %}
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

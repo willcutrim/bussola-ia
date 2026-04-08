@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_header.html" with eyebrow="Licitacoes" title=page_title subtitle=page_subtitle secondary_action_url="/licitacoes/" secondary_action_label="Voltar para listagem" %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger rounded-4 border-0 mb-4">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row g-3 g-xl-4">
+        <div class="col-12 col-xl-8">
+            <section class="surface-card p-4 p-xl-5 mb-3 mb-xl-4">
+                <div class="mb-4">
+                    <p class="eyebrow mb-2">Contexto</p>
+                    <h2 class="h4 mb-0">Dados principais do edital</h2>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.empresa %}</div>
+                    <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.numero %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.orgao %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.objeto %}</div>
+                </div>
+            </section>
+
+            <section class="surface-card p-4 p-xl-5">
+                <div class="mb-4">
+                    <p class="eyebrow mb-2">Observacoes</p>
+                    <h2 class="h4 mb-0">Notas internas e referencia externa</h2>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.link_externo %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.observacoes %}</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="d-grid gap-3 gap-xl-4">
+                <section class="surface-card p-4">
+                    <div class="mb-4">
+                        <p class="eyebrow mb-2">Classificacao</p>
+                        <h2 class="h5 mb-0">Etapa e status</h2>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">{% include "includes/form_field.html" with field=form.modalidade %}</div>
+                        <div class="col-12">{% include "includes/form_field.html" with field=form.situacao %}</div>
+                        <div class="col-12">{% include "includes/form_field.html" with field=form.ativa %}</div>
+                    </div>
+                </section>
+
+                <section class="surface-card p-4">
+                    <div class="mb-4">
+                        <p class="eyebrow mb-2">Financeiro</p>
+                        <h2 class="h5 mb-0">Janela e valor</h2>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">{% include "includes/form_field.html" with field=form.data_abertura %}</div>
+                        <div class="col-12">{% include "includes/form_field.html" with field=form.valor_estimado %}</div>
+                    </div>
+                </section>
+
+                <section class="surface-card form-actions-card p-4">
+                    <div class="mb-3">
+                        <p class="eyebrow mb-2">Finalizacao</p>
+                        <h2 class="h5 mb-1">Salvar oportunidade</h2>
+                        <p class="form-actions-note mb-0">Confirme etapa, janela e dados do edital antes de registrar a licitacao.</p>
+                    </div>
+                    <div class="form-actions-divider"></div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-lg" type="submit">Salvar licitacao</button>
+                        <a class="btn btn-outline-light" href="{% url 'licitacoes:index' %}">Cancelar</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

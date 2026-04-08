@@ -1,0 +1,150 @@
+{% url 'analises:ia_resumo' analise.pk as analise_ai_resumo_url %}
+{% url 'analises:ia_extracao' analise.pk as analise_ai_extracao_url %}
+{% url 'analises:ia_parecer' analise.pk as analise_ai_parecer_url %}
+{% url 'analises:ia_comparacao' analise.pk as analise_ai_comparacao_url %}
+{% url 'analises:ia_checklist' analise.pk as analise_ai_checklist_url %}
+
+<section class="surface-card ai-action-card p-4 p-xl-5 mb-4">
+    <div class="row g-4 align-items-start">
+        <div class="col-12 col-xl-7">
+            <div class="mb-4">
+                <p class="eyebrow mb-2">IA aplicada</p>
+                <h2 class="h4 mb-2">Central de analise assistida</h2>
+                <p class="text-secondary mb-0">Cole o trecho relevante do documento para gerar respostas auditaveis, sem sair da tela de analise.</p>
+            </div>
+
+            <form id="analise-ai-form" class="d-grid gap-3" hx-sync="this:replace">
+                {% csrf_token %}
+                <div>
+                    <label class="form-label" for="id_ai_texto_documento">Texto base para IA</label>
+                    <textarea
+                        class="form-control ai-textarea"
+                        id="id_ai_texto_documento"
+                        name="texto_documento"
+                        rows="7"
+                        placeholder="Cole aqui o trecho do edital, contrato ou documento que deve ser analisado.">{{ analise.descricao|default:'' }}</textarea>
+                    <div class="form-text ai-input-note">Use texto real do documento. A IA nao deve inferir clausulas, prazos ou exigencias sem evidencias no conteudo enviado.</div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12 col-lg-7">
+                        <label class="form-label" for="id_ai_campos_alvo">Campos alvo da extracao</label>
+                        <input
+                            class="form-control"
+                            id="id_ai_campos_alvo"
+                            name="campos_alvo"
+                            type="text"
+                            placeholder="Ex.: prazo, vigencia, garantia, objeto">
+                    </div>
+                    <div class="col-12 col-lg-5">
+                        <div class="ai-action-note h-100">
+                            <span class="theme-detail-label d-block mb-2">Contexto vinculado</span>
+                            <div class="d-grid gap-2">
+                                <div class="d-flex justify-content-between gap-3">
+                                    <span class="text-secondary">Licitacao</span>
+                                    <strong>{{ analise.licitacao.numero }}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between gap-3">
+                                    <span class="text-secondary">Documento</span>
+                                    <strong>{{ analise.documento.nome|default:"Nao vinculado" }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div id="ai-processing-indicator" class="ai-processing-indicator htmx-indicator" aria-live="polite">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+                        <span>Processando analise...</span>
+                    </div>
+                    <div class="text-secondary small">As respostas aparecem abaixo, em cards independentes por tarefa.</div>
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <button
+                            class="btn btn-outline-light w-100 ai-action-btn"
+                            type="button"
+                            hx-post="{{ analise_ai_resumo_url }}"
+                            hx-include="#analise-ai-form"
+                            hx-target="#ai-summary-panel"
+                            hx-swap="innerHTML"
+                            hx-indicator="#ai-processing-indicator">
+                            Gerar resumo do documento
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <button
+                            class="btn btn-outline-light w-100 ai-action-btn"
+                            type="button"
+                            hx-post="{{ analise_ai_extracao_url }}"
+                            hx-include="#analise-ai-form"
+                            hx-target="#ai-extraction-panel"
+                            hx-swap="innerHTML"
+                            hx-indicator="#ai-processing-indicator">
+                            Extrair dados do documento
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <button
+                            class="btn btn-primary w-100 ai-action-btn"
+                            type="button"
+                            hx-post="{{ analise_ai_parecer_url }}"
+                            hx-include="#analise-ai-form"
+                            hx-target="#ai-parecer-panel"
+                            hx-swap="innerHTML"
+                            hx-indicator="#ai-processing-indicator">
+                            Gerar parecer tecnico
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <button
+                            class="btn btn-outline-light w-100 ai-action-btn"
+                            type="button"
+                            hx-post="{{ analise_ai_comparacao_url }}"
+                            hx-include="#analise-ai-form"
+                            hx-target="#ai-comparison-panel"
+                            hx-swap="innerHTML"
+                            hx-indicator="#ai-processing-indicator">
+                            Comparar com licitacao
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <button
+                            class="btn btn-outline-light w-100 ai-action-btn"
+                            type="button"
+                            hx-post="{{ analise_ai_checklist_url }}"
+                            hx-include="#analise-ai-form"
+                            hx-target="#ai-checklist-panel"
+                            hx-swap="innerHTML"
+                            hx-indicator="#ai-processing-indicator">
+                            Gerar checklist
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-12 col-xl-5">
+            <div class="ai-usage-card h-100">
+                <p class="eyebrow mb-2">Fluxo sugerido</p>
+                <h3 class="h5 mb-3">Como usar este workspace</h3>
+                <div class="d-grid gap-3">
+                    <div class="summary-item pt-0">
+                        <div class="fw-semibold mb-1">1. Contextualize o texto</div>
+                        <div class="small text-secondary">Cole o trecho mais relevante do documento para reduzir ruido e melhorar rastreabilidade.</div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="fw-semibold mb-1">2. Execute a tarefa certa</div>
+                        <div class="small text-secondary">Resumo para leitura rapida, comparacao para aderencia e parecer para decisao.</div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="fw-semibold mb-1">3. Reuse os resultados</div>
+                        <div class="small text-secondary">O parecer tecnico atualiza a analise; os demais cards ajudam na triagem antes da decisao final.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

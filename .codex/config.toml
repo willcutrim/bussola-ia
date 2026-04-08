@@ -1,0 +1,21 @@
+model = "gpt-5.4"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+
+project_doc_max_bytes = 65536
+project_doc_fallback_filenames = ["AGENTS.md", ".agents.md", "AUTH_UI.md", "TEAM_GUIDE.md"]
+
+[profiles.fast]
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"
+
+[profiles.deep]
+model = "gpt-5.4"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+
+[profiles.review]
+model = "gpt-5.4"
+model_reasoning_effort = "high"
+approval_policy = "never"

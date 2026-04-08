@@ -1,0 +1,22 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4">
+    <div class="mb-3">
+        <span class="dashboard-eyebrow mb-2 d-inline-flex">Radar operacional</span>
+        <h2 class="h5 mb-1">Resumo do dia</h2>
+        <p class="text-secondary small mb-0">Indicadores sinteticos para leitura rapida da operacao.</p>
+    </div>
+
+    <div class="d-grid gap-3">
+        <div class="summary-row">
+            <span>Licitacoes em analise</span>
+            <strong>{{ dashboard.total_em_analise }}</strong>
+        </div>
+        <div class="summary-row">
+            <span>Empresas com operacao ativa</span>
+            <strong>{{ dashboard.total_empresas_ativas }}</strong>
+        </div>
+        <div class="summary-row">
+            <span>Usuarios com acesso</span>
+            <strong>{{ dashboard.total_usuarios }}</strong>
+        </div>
+    </div>
+</section>

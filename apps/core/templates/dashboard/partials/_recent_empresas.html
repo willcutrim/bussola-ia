@@ -1,0 +1,27 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 h-100">
+    <div class="mb-3">
+        <span class="dashboard-eyebrow mb-2 d-inline-flex">Base comercial</span>
+        <h2 class="h4 mb-1">Empresas recentes</h2>
+        <p class="text-secondary mb-0">Novos cadastros que ampliam a inteligencia comercial e operacional.</p>
+    </div>
+
+    <div class="d-grid gap-3">
+        {% for empresa in dashboard.empresas_recentes %}
+            <article class="company-activity-item">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                    <div>
+                        <div class="fw-semibold mb-1">{{ empresa.nome }}</div>
+                        <div class="small text-secondary">{{ empresa.email|default:"Sem e-mail cadastrado" }}</div>
+                    </div>
+                    {% if empresa.ativa %}
+                        {% include "includes/status_badge.html" with tone="success" label="Ativa" %}
+                    {% else %}
+                        {% include "includes/status_badge.html" with tone="muted" label="Inativa" %}
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            {% include "includes/empty_state.html" with empty_title="Nenhuma empresa recente" empty_description="Os cadastros mais novos aparecerao aqui para acelerar o acompanhamento comercial." %}
+        {% endfor %}
+    </div>
+</section>

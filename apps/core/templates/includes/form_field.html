@@ -1,0 +1,41 @@
+{% if field.field.widget.input_type == "checkbox" %}
+    <div class="form-switch-card">
+        <div class="form-check form-switch mb-0 d-flex align-items-center gap-2">
+            {{ field }}
+            <label class="form-check-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+        {% if field.help_text %}
+            <p class="small text-secondary mb-0 mt-2">{{ field.help_text }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+            <div class="small text-danger mt-2">{{ error }}</div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div>
+        <label class="form-label mb-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {% if field.field.widget.input_type == "password" %}
+            <div class="password-input-group">
+                {{ field }}
+                <button
+                    class="password-toggle"
+                    type="button"
+                    data-password-toggle-button
+                    data-target="{{ field.id_for_label }}"
+                    aria-label="Mostrar senha"
+                    aria-pressed="false"
+                >
+                    <span data-password-toggle-label>Mostrar</span>
+                </button>
+            </div>
+        {% else %}
+            {{ field }}
+        {% endif %}
+        {% if field.help_text %}
+            <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+            <div class="small text-danger mt-2">{{ error }}</div>
+        {% endfor %}
+    </div>
+{% endif %}

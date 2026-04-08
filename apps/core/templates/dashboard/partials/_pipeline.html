@@ -1,0 +1,45 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 h-100">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Fluxo de decisao</span>
+            <h2 class="h4 mb-2">Pipeline por situacao</h2>
+            <p class="text-secondary mb-0">Leitura visual para priorizar gargalos, etapas quentes e volume por status.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <span class="dashboard-chip dashboard-chip-info">{{ dashboard_completion }}% em movimento</span>
+            <span class="dashboard-chip dashboard-chip-neutral">{{ dashboard.total_licitacoes }} oportunidades</span>
+        </div>
+    </div>
+
+    {% if dashboard.licitacoes_por_situacao %}
+        <div class="row g-3 mb-4">
+            {% for item in dashboard.licitacoes_por_situacao %}
+                <div class="col-12 col-md-6">
+                    <article class="pipeline-stage pipeline-stage-{{ item.situacao }}">
+                        <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                            <div>
+                                <span class="pipeline-stage-label">
+                                    {% if item.situacao == "rascunho" %}Rascunho{% elif item.situacao == "em_analise" %}Em analise{% elif item.situacao == "em_andamento" %}Em andamento{% elif item.situacao == "encerrada" %}Encerrada{% elif item.situacao == "cancelada" %}Cancelada{% else %}{{ item.situacao }}{% endif %}
+                                </span>
+                                <p class="pipeline-stage-helper mb-0">{% widthratio item.total dashboard.total_licitacoes 100 %}% do pipeline atual</p>
+                            </div>
+                            <span class="pipeline-stage-total">{{ item.total }}</span>
+                        </div>
+                        <div class="pipeline-stage-bar">
+                            <div class="pipeline-stage-fill" style="width: {% widthratio item.total dashboard.total_licitacoes 100 %}%"></div>
+                        </div>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="pipeline-summary">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="dashboard-chip dashboard-chip-primary">Leitura rapida</span>
+                <p class="small text-secondary mb-0">Concentre o proximo ciclo nas oportunidades em analise e mantenha o fluxo ativo nas frentes em andamento.</p>
+            </div>
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Sem distribuicao ainda" empty_description="Assim que houver licitacoes cadastradas, o pipeline visual passa a destacar peso, volume e prioridade de cada etapa." %}
+    {% endif %}
+</section>

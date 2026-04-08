@@ -1,0 +1,61 @@
+<section class="surface-card p-4 p-xl-5">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+            <p class="eyebrow mb-2">Tabela</p>
+            <h2 class="h4 mb-0">Pipeline de licitacoes</h2>
+        </div>
+        <div class="small text-secondary">{{ paginator.count|default:0 }} registros</div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle theme-table">
+            <thead>
+                <tr>
+                    <th>Edital</th>
+                    <th class="d-none d-lg-table-cell">Orgao</th>
+                    <th class="d-none d-xl-table-cell">Modalidade</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for licitacao in licitacoes %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ licitacao.numero }}</div>
+                            <div class="small text-secondary text-wrap">{{ licitacao.objeto|truncatechars:88 }}</div>
+                            {% if licitacao.empresa %}
+                                <div class="small text-secondary mt-1">{{ licitacao.empresa.nome }}</div>
+                            {% endif %}
+                        </td>
+                        <td class="d-none d-lg-table-cell">{{ licitacao.orgao }}</td>
+                        <td class="d-none d-xl-table-cell">{{ licitacao.get_modalidade_display }}</td>
+                        <td>{{ licitacao.data_abertura|date:"d/m/Y"|default:"Sem data" }}</td>
+                        <td>{% include "includes/status_badge.html" with status=licitacao.situacao %}</td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-sm table-actions-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Ações
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end table-actions-menu">
+                                    <li><a class="dropdown-item" href="{% url 'licitacoes:detail' licitacao.pk %}">Ver detalhes</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'licitacoes:update' licitacao.pk %}">Editar</a></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'licitacoes:delete' licitacao.pk %}">Excluir</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            {% include "licitacoes/empty_state.html" with empty_title="Nenhuma licitacao encontrada" empty_description="Ajuste os filtros ou cadastre uma nova oportunidade para alimentar o pipeline." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "includes/pagination.html" %}
+</section>

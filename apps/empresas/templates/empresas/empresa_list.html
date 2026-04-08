@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_header.html" with eyebrow="Empresas" title=page_title subtitle=page_subtitle primary_action_url=page_primary_action_url primary_action_label=page_primary_action_label %}
+
+<div class="row g-3 g-xl-4 mb-4">
+    {% for item in empresa_kpis %}
+        <div class="col-12 col-sm-6 col-xl-4">
+            {% include "includes/kpi_card.html" with title=item.title value=item.value helper=item.helper tone=item.tone icon=item.icon %}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xxl-8">
+        {% include "empresas/_filters.html" %}
+        {% include "empresas/_table.html" %}
+    </div>
+
+    <div class="col-12 col-xxl-4">
+        <div class="d-grid gap-3 gap-xl-4">
+            {% include "empresas/_form.html" %}
+
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Resumo</p>
+                <h2 class="h5 mb-3">Qualidade da base</h2>
+                <div class="d-grid gap-3">
+                    <div class="summary-item pt-0">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Total de empresas</span>
+                            <strong>{{ empresa_kpis.0.value }}</strong>
+                        </div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Empresas ativas</span>
+                            <strong>{{ empresa_kpis.1.value }}</strong>
+                        </div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">CNPJ preenchido</span>
+                            <strong>{{ empresa_kpis.2.value }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

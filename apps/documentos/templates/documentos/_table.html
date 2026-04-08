@@ -1,0 +1,25 @@
+<section class="surface-card p-4 p-xl-5">
+    <div class="mb-3">
+        <p class="eyebrow mb-2">Tabela</p>
+        <h2 class="h4 mb-0">Biblioteca de documentos</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle theme-table">
+            <thead>
+                <tr>
+                    <th>Arquivo</th>
+                    <th class="d-none d-md-table-cell">Categoria</th>
+                    <th class="d-none d-lg-table-cell">Origem</th>
+                    <th>Atualizado em</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4">
+                        {% include "documentos/empty_state.html" with empty_title="Nenhum documento encontrado" empty_description="Este partial deve concentrar a listagem, processamento e acoes em lote do modulo." %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>

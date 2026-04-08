@@ -1,0 +1,20 @@
+<section class="surface-card page-header-card mb-4 p-4 p-xl-5">
+    <div class="row g-3 align-items-center">
+        <div class="col-12 col-xl">
+            <p class="eyebrow mb-2">{{ page_eyebrow|default:"Modulo" }}</p>
+            <h2 class="h3 mb-2">{{ section_title|default:page_title }}</h2>
+            {% if section_description %}
+                <p class="text-secondary mb-0 col-12 col-xxl-8">{{ section_description }}</p>
+            {% elif page_subtitle %}
+                <p class="text-secondary mb-0 col-12 col-xxl-8">{{ page_subtitle }}</p>
+            {% endif %}
+        </div>
+        <div class="col-12 col-xl-auto">
+            <div class="d-flex flex-wrap gap-2 justify-content-xl-end">
+                {% if status %}
+                    {% include "includes/status_badge.html" with status=status %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

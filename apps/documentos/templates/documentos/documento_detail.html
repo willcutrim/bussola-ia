@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% url 'documentos:update' documento.pk as documento_update_url %}
+{% url 'documentos:index' as documentos_list_url %}
+{% include "includes/page_header.html" with eyebrow="Documentos" title=documento.nome subtitle=documento.licitacao.numero primary_action_url=documento_update_url primary_action_label="Editar documento" secondary_action_url=documentos_list_url secondary_action_label="Voltar" %}
+
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xl-8">
+        <section class="surface-card p-4 p-xl-5 h-100">
+            <div class="mb-4">
+                <p class="eyebrow mb-2">Biblioteca</p>
+                <h2 class="h4 mb-0">Resumo do documento</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Licitacao</span>
+                    <div>{{ documento.licitacao.numero }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Tipo</span>
+                    <div>{{ documento.get_tipo_display }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Status</span>
+                    <div>{{ documento.get_status_display }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Upload</span>
+                    <div>{{ documento.data_upload }}</div>
+                </div>
+                <div class="col-12">
+                    <span class="theme-detail-label d-block mb-2">Observacoes</span>
+                    <div class="text-secondary">{{ documento.observacoes|default:"Sem observacoes."|linebreaksbr }}</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="d-grid gap-3 gap-xl-4">
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Arquivo</p>
+                <h2 class="h5 mb-3">Acesso rapido</h2>
+                {% if documento.arquivo %}
+                    <a class="btn btn-primary w-100" href="{{ documento.arquivo.url }}" target="_blank" rel="noopener noreferrer">Abrir arquivo</a>
+                {% else %}
+                    {% include "includes/empty_state.html" with empty_title="Arquivo indisponivel" empty_description="O documento ainda nao possui um arquivo associado." %}
+                {% endif %}
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

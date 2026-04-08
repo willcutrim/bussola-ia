@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_header.html" with eyebrow="Licitacoes" title=licitacao.numero subtitle=licitacao.objeto primary_action_url=page_primary_action_url primary_action_label=page_primary_action_label secondary_action_url="/licitacoes/" secondary_action_label="Voltar" %}
+
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xl-8">
+        <section class="surface-card p-4 p-xl-5 h-100">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <div>
+                    <p class="eyebrow mb-2">Resumo</p>
+                    <h2 class="h4 mb-0">Visao geral da oportunidade</h2>
+                </div>
+                {% include "includes/status_badge.html" with status=licitacao.situacao %}
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <span class="theme-detail-label d-block mb-2">Objeto</span>
+                    <div class="fs-5">{{ licitacao.objeto }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Orgao</span>
+                    <div>{{ licitacao.orgao }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Empresa vinculada</span>
+                    <div>{{ licitacao.empresa.nome|default:"Nao vinculada" }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Modalidade</span>
+                    <div>{{ licitacao.get_modalidade_display }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Data de abertura</span>
+                    <div>{{ licitacao.data_abertura|date:"d/m/Y"|default:"Nao informada" }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Valor estimado</span>
+                    <div>R$ {{ licitacao.valor_estimado|default:"0,00" }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Link externo</span>
+                    {% if licitacao.link_externo %}
+                        <a class="link-info" href="{{ licitacao.link_externo }}" target="_blank" rel="noopener noreferrer">{{ licitacao.link_externo }}</a>
+                    {% else %}
+                        <div class="text-secondary">Nao informado</div>
+                    {% endif %}
+                </div>
+                <div class="col-12">
+                    <span class="theme-detail-label d-block mb-2">Observacoes</span>
+                    <div class="text-secondary">{{ licitacao.observacoes|default:"Sem observacoes adicionais."|linebreaksbr }}</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="d-grid gap-3 gap-xl-4">
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Timeline</p>
+                <h2 class="h5 mb-3">Historico do registro</h2>
+                <div class="d-grid gap-3">
+                    <div>
+                        <span class="theme-detail-label d-block mb-1">Criado em</span>
+                        <div>{{ licitacao.created_at|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div>
+                        <span class="theme-detail-label d-block mb-1">Atualizado em</span>
+                        <div>{{ licitacao.updated_at|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div>
+                        <span class="theme-detail-label d-block mb-1">Ativa</span>
+                        {% if licitacao.ativa %}
+                            {% include "includes/status_badge.html" with tone="success" label="Ativa" %}
+                        {% else %}
+                            {% include "includes/status_badge.html" with tone="muted" label="Inativa" %}
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Ações</p>
+                <h2 class="h5 mb-3">Gerenciar oportunidade</h2>
+                <div class="d-grid gap-2">
+                    <a class="btn btn-primary justify-content-center" href="{% url 'licitacoes:update' licitacao.pk %}">Editar licitacao</a>
+                    <a class="btn btn-outline-danger justify-content-center" href="{% url 'licitacoes:delete' licitacao.pk %}">Excluir licitacao</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% now "H" as current_hour %}
+{% with request.user.first_name|default:request.user.username as user_name %}
+<section class="dashboard-hero mb-4 mb-xl-5">
+    <div class="surface-card dashboard-hero-card rounded-4 border-0 shadow-sm p-4 p-xl-5">
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-4 mb-4">
+            <div class="dashboard-hero-copy">
+                <span class="dashboard-eyebrow mb-3 d-inline-flex">Painel executivo</span>
+                <h2 class="dashboard-hero-title mb-3">
+                    {% if current_hour < "12" %}
+                        Bom dia, {{ user_name }} <span aria-hidden="true">👋</span>
+                    {% elif current_hour < "18" %}
+                        Boa tarde, {{ user_name }} <span aria-hidden="true">👋</span>
+                    {% else %}
+                        Boa noite, {{ user_name }} <span aria-hidden="true">👋</span>
+                    {% endif %}
+                </h2>
+                <p class="dashboard-hero-subtitle mb-0">Aqui esta o resumo das suas oportunidades hoje.</p>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="dashboard-chip dashboard-chip-neutral">Atualizado agora</span>
+                <a class="btn btn-primary btn-lg rounded-4 px-4" href="{% url 'licitacoes:create' %}">Nova licitacao</a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="dashboard-hero-stat">
+                    <span class="dashboard-hero-stat-label">Oportunidades ativas</span>
+                    <strong class="dashboard-hero-stat-value">{{ dashboard.total_licitacoes_ativas }}</strong>
+                    <span class="dashboard-hero-stat-helper">em um pipeline de {{ dashboard.total_licitacoes }} licitacoes</span>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="dashboard-hero-stat">
+                    <span class="dashboard-hero-stat-label">Empresas prontas para operar</span>
+                    <strong class="dashboard-hero-stat-value">{{ dashboard.total_empresas_ativas }}</strong>
+                    <span class="dashboard-hero-stat-helper">base ativa para disputar novos editais</span>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="dashboard-hero-stat">
+                    <span class="dashboard-hero-stat-label">Cobertura do pipeline</span>
+                    <strong class="dashboard-hero-stat-value">{{ dashboard_completion }}%</strong>
+                    <span class="dashboard-hero-stat-helper">das oportunidades seguem em movimento</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endwith %}

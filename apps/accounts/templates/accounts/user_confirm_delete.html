@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% url 'accounts:list' as accounts_list_url %}
+{% include "includes/page_header.html" with eyebrow="Accounts" title=page_title subtitle=page_subtitle secondary_action_url=accounts_list_url secondary_action_label="Voltar" %}
+
+<section class="surface-card p-4 p-xl-5 mx-auto" style="max-width: 42rem;">
+    <p class="eyebrow mb-2">Confirmacao</p>
+    <h2 class="h3 mb-3">Excluir {{ object.username }}</h2>
+    <p class="text-secondary mb-4">Ao confirmar, o usuario deixa de aparecer na visao principal. Revise se essa conta ainda precisa acessar o painel administrativo.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
+            <a class="btn btn-outline-light" href="{% url 'accounts:detail' object.pk %}">Cancelar</a>
+            <button class="btn btn-danger" type="submit">Confirmar exclusao</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

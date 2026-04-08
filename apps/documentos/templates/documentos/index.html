@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_intro.html" with page_eyebrow="Documentos" %}
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xxl-8">
+        {% include "documentos/_filters.html" %}
+        {% include "documentos/_table.html" %}
+    </div>
+    <div class="col-12 col-xxl-4">
+        {% include "documentos/_form.html" %}
+    </div>
+</div>
+{% endblock %}

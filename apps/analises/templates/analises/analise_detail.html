@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% url 'analises:update' analise.pk as analise_update_url %}
+{% url 'analises:list' as analises_list_url %}
+{% include "includes/page_header.html" with eyebrow="Analises" title=analise.titulo subtitle=analise.licitacao.numero primary_action_url=analise_update_url primary_action_label="Editar analise" secondary_action_url=analises_list_url secondary_action_label="Voltar" %}
+
+<div class="row g-3 g-xl-4 mb-4">
+    <div class="col-12 col-xl-8">
+        <section class="surface-card p-4 p-xl-5 h-100">
+            <div class="mb-4">
+                <p class="eyebrow mb-2">Contexto</p>
+                <h2 class="h4 mb-0">Resumo da analise</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Licitacao</span>
+                    <div>{{ analise.licitacao.numero }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <span class="theme-detail-label d-block mb-2">Documento</span>
+                    <div>{{ analise.documento.nome|default:"Nao vinculado" }}</div>
+                </div>
+                <div class="col-12">
+                    <span class="theme-detail-label d-block mb-2">Descricao</span>
+                    <div class="text-secondary">{{ analise.descricao|default:"Sem descricao."|linebreaksbr }}</div>
+                </div>
+                <div class="col-12">
+                    <span class="theme-detail-label d-block mb-2">Parecer</span>
+                    <div class="text-secondary">{{ analise.parecer|default:"Sem parecer registrado."|linebreaksbr }}</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="d-grid gap-3 gap-xl-4">
+            <section class="surface-card p-4">
+                <p class="eyebrow mb-2">Status</p>
+                <h2 class="h5 mb-3">Acompanhamento</h2>
+                <div class="d-grid gap-3">
+                    <div class="summary-item pt-0">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Status</span>
+                            <strong>{{ analise.get_status_display }}</strong>
+                        </div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Prioridade</span>
+                            <strong>{{ analise.get_prioridade_display }}</strong>
+                        </div>
+                    </div>
+                    <div class="summary-item pt-3">
+                        <div class="d-flex justify-content-between gap-3">
+                            <span class="text-secondary">Responsavel</span>
+                            <strong>{{ analise.responsavel|default:"Nao definido" }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+{% include "analises/partials/ai_actions.html" %}
+
+<section class="mb-4">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-3">
+        <div>
+            <p class="eyebrow mb-2">Resultados de IA</p>
+            <h2 class="h4 mb-1">Workspace analitico</h2>
+            <p class="text-secondary mb-0">Cada acao atualiza somente o card correspondente, mantendo o restante da leitura intacto.</p>
+        </div>
+        <div class="topbar-meta-badge d-inline-flex">HTMX ativo para respostas parciais</div>
+    </div>
+    <div class="row g-3 g-xl-4">
+        <div class="col-12 col-xxl-6" id="ai-summary-panel">
+            {% include "analises/partials/ai_result_resumo.html" with analise=analise %}
+        </div>
+        <div class="col-12 col-xxl-6" id="ai-parecer-panel">
+            {% include "analises/partials/ai_result_parecer.html" with analise=analise %}
+        </div>
+        <div class="col-12 col-xxl-6" id="ai-extraction-panel">
+            {% include "analises/partials/ai_result_extracao.html" with analise=analise %}
+        </div>
+        <div class="col-12 col-xxl-6" id="ai-comparison-panel">
+            {% include "analises/partials/ai_result_comparacao.html" with analise=analise %}
+        </div>
+        <div class="col-12" id="ai-checklist-panel">
+            {% include "analises/partials/ai_result_checklist.html" with analise=analise %}
+        </div>
+    </div>
+</section>
+{% endblock %}

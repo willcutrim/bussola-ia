@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_header.html" with eyebrow="Endereco" title=page_title subtitle=page_subtitle secondary_action_url="/empresas/" secondary_action_label="Voltar para empresas" %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="row g-3 g-xl-4">
+        <div class="col-12 col-xl-8">
+            <section class="surface-card p-4 p-xl-5">
+                <div class="mb-4">
+                    <p class="eyebrow mb-2">Localizacao</p>
+                    <h2 class="h4 mb-0">Endereco da empresa</h2>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.empresa %}</div>
+                    <div class="col-12 col-lg-8">{% include "includes/form_field.html" with field=form.logradouro %}</div>
+                    <div class="col-12 col-lg-4">{% include "includes/form_field.html" with field=form.numero %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.complemento %}</div>
+                    <div class="col-12 col-lg-5">{% include "includes/form_field.html" with field=form.bairro %}</div>
+                    <div class="col-12 col-lg-4">{% include "includes/form_field.html" with field=form.cidade %}</div>
+                    <div class="col-12 col-lg-1">{% include "includes/form_field.html" with field=form.estado %}</div>
+                    <div class="col-12 col-lg-2">{% include "includes/form_field.html" with field=form.cep %}</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <section class="surface-card form-actions-card p-4">
+                <div class="mb-3">
+                    <p class="eyebrow mb-2">Finalizacao</p>
+                    <h2 class="h5 mb-1">Salvar endereco</h2>
+                    <p class="form-actions-note mb-0">Revise localizacao e confirme para manter a base empresarial atualizada.</p>
+                </div>
+                <div class="form-actions-divider"></div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary btn-lg" type="submit">Salvar endereco</button>
+                    <a class="btn btn-outline-light" href="{% url 'empresas:index' %}">Cancelar</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+{% endblock %}

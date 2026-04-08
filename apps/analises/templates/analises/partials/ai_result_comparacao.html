@@ -1,0 +1,58 @@
+<article class="surface-card ai-result-card p-4 h-100">
+    <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mb-4">
+        <div>
+            <p class="eyebrow mb-2">IA</p>
+            <h3 class="h5 mb-1">Comparacao com a licitacao</h3>
+            <p class="text-secondary mb-0">Confronta o texto enviado com o contexto da oportunidade para evidenciar aderencias e pontos de risco.</p>
+        </div>
+        <span class="status-pill status-pill-warning">Comparacao</span>
+    </div>
+
+    {% if result %}
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-lg-4">
+                <div class="ai-mini-panel">
+                    <div class="theme-detail-label mb-2">Aderencias</div>
+                    <ul class="ai-list mb-0">
+                        {% for item in result.aderencias %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li class="text-secondary">Nenhuma aderencia confirmada.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="ai-mini-panel">
+                    <div class="theme-detail-label mb-2">Divergencias</div>
+                    <ul class="ai-list mb-0">
+                        {% for item in result.divergencias %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li class="text-secondary">Sem divergencias relevantes.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="ai-mini-panel">
+                    <div class="theme-detail-label mb-2">Nao verificaveis</div>
+                    <ul class="ai-list mb-0">
+                        {% for item in result.lacunas %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li class="text-secondary">Sem lacunas criticas nesta rodada.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-callout">
+            <div class="theme-detail-label mb-2">Recomendacao</div>
+            <div class="fw-semibold">{{ result.recomendacao }}</div>
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Nenhuma comparacao gerada ainda" empty_description="Use esta acao para verificar aderencia, divergencias contratuais e pontos nao comprovados no texto analisado." %}
+    {% endif %}
+</article>

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% url 'accounts:list' as accounts_list_url %}
+{% include "includes/page_header.html" with eyebrow="Accounts" title=page_title subtitle=page_subtitle secondary_action_url=accounts_list_url secondary_action_label="Voltar para listagem" %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger rounded-4 border-0 mb-4">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row g-3 g-xl-4">
+        <div class="col-12 col-xl-8">
+            <section class="surface-card p-4 p-xl-5 mb-3 mb-xl-4">
+                <div class="mb-4">
+                    <p class="eyebrow mb-2">Conta</p>
+                    <h2 class="h4 mb-0">Dados principais do usuario</h2>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.username %}</div>
+                    <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.email %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.nome_completo %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.telefone %}</div>
+                </div>
+            </section>
+
+            {% if form.password1 %}
+                <section class="surface-card p-4 p-xl-5">
+                    <div class="mb-4">
+                        <p class="eyebrow mb-2">Seguranca</p>
+                        <h2 class="h4 mb-0">Definicao de senha inicial</h2>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.password1 %}</div>
+                        <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.password2 %}</div>
+                    </div>
+                </section>
+            {% endif %}
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="d-grid gap-3 gap-xl-4">
+                <section class="surface-card p-4">
+                    <div class="mb-4">
+                        <p class="eyebrow mb-2">Permissoes</p>
+                        <h2 class="h5 mb-0">Acesso ao sistema</h2>
+                    </div>
+                    <div class="d-grid gap-3">
+                        {% include "includes/form_field.html" with field=form.ativo %}
+                        {% include "includes/form_field.html" with field=form.deve_trocar_senha %}
+                        {% include "includes/form_field.html" with field=form.is_staff %}
+                    </div>
+                </section>
+
+                <section class="surface-card form-actions-card p-4">
+                    <div class="mb-3">
+                        <p class="eyebrow mb-2">Finalizacao</p>
+                        <h2 class="h5 mb-1">Salvar usuario</h2>
+                        <p class="form-actions-note mb-0">Confira acesso e seguranca antes de liberar a conta no sistema.</p>
+                    </div>
+                    <div class="form-actions-divider"></div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-lg" type="submit">Salvar usuario</button>
+                        <a class="btn btn-outline-light" href="{% url 'accounts:list' %}">Cancelar</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

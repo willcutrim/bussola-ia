@@ -1,0 +1,45 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4">
+    <div class="mb-3">
+        <span class="dashboard-eyebrow mb-2 d-inline-flex">Execucao</span>
+        <h2 class="h5 mb-1">Ações rapidas</h2>
+        <p class="text-secondary small mb-0">Atalhos para movimentar o funil sem sair do painel.</p>
+    </div>
+
+    <div class="d-grid gap-3">
+        <a class="quick-action quick-action-primary" href="{% url 'licitacoes:create' %}">
+            <span class="quick-action-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                </svg>
+            </span>
+            <span>
+                <strong>Nova licitacao</strong>
+                <small>Registrar uma nova oportunidade priorizada.</small>
+            </span>
+        </a>
+
+        <a class="quick-action" href="{% url 'empresas:create' %}">
+            <span class="quick-action-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 20h16v-2H4v2Zm2-4h3V4H6v12Zm5 0h3V8h-3v8Zm5 0h2V2h-2v14Z" fill="currentColor"/>
+                </svg>
+            </span>
+            <span>
+                <strong>Cadastrar empresa</strong>
+                <small>Ampliar a base comercial com novos parceiros.</small>
+            </span>
+        </a>
+
+        <a class="quick-action" href="{% url 'empresas:contato_create' %}">
+            <span class="quick-action-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.4 0-8 2-8 4.5V21h16v-2.5C20 16 16.4 14 12 14Z" fill="currentColor"/>
+                </svg>
+            </span>
+            <span>
+                <strong>Novo contato</strong>
+                <small>Registrar decisores e pontos de relacionamento.</small>
+            </span>
+        </a>
+    </div>
+</section>

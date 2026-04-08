@@ -1,0 +1,54 @@
+<article class="surface-card ai-result-card p-4 h-100">
+    <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mb-4">
+        <div>
+            <p class="eyebrow mb-2">IA</p>
+            <h3 class="h5 mb-1">Resumo do documento</h3>
+            <p class="text-secondary mb-0">Leitura executiva para decidir rapidamente se o documento merece aprofundamento.</p>
+        </div>
+        <span class="status-pill status-pill-primary">Resumo</span>
+    </div>
+
+    {% if result %}
+        <div class="ai-rich-text mb-4">{{ result.resumo_executivo|linebreaksbr }}</div>
+        <div class="row g-3">
+            <div class="col-12 col-lg-4">
+                <div class="ai-mini-panel">
+                    <div class="theme-detail-label mb-2">Fatos</div>
+                    <ul class="ai-list mb-0">
+                        {% for item in result.fatos %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li class="text-secondary">Sem fatos destacados.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="ai-mini-panel">
+                    <div class="theme-detail-label mb-2">Inferencias</div>
+                    <ul class="ai-list mb-0">
+                        {% for item in result.inferencias %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li class="text-secondary">Sem inferencias relevantes.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="ai-mini-panel">
+                    <div class="theme-detail-label mb-2">Lacunas</div>
+                    <ul class="ai-list mb-0">
+                        {% for item in result.lacunas %}
+                            <li>{{ item }}</li>
+                        {% empty %}
+                            <li class="text-secondary">Nenhuma lacuna destacada.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Nenhum resumo gerado ainda" empty_description="Clique em 'Gerar resumo do documento' para sintetizar fatos, inferencias e lacunas." %}
+    {% endif %}
+</article>

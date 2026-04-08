@@ -1,0 +1,1 @@
+"""Licitacoes app."""

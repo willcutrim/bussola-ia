@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "includes/page_header.html" with eyebrow="Contatos" title=page_title subtitle=page_subtitle primary_action_url=page_primary_action_url primary_action_label=page_primary_action_label %}
+
+<div class="row g-3 g-xl-4">
+    <div class="col-12 col-xxl-8">
+        <section class="surface-card p-4 mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <div>
+                    <p class="eyebrow mb-2">Filtro</p>
+                    <h2 class="h5 mb-0">Localizar por empresa</h2>
+                </div>
+            </div>
+            <form method="get">
+                <div class="row g-3">
+                    <div class="col-12 col-md-8">
+                        <label class="form-label mb-2" for="id_empresa">Empresa</label>
+                        <input class="form-control" id="id_empresa" type="text" name="empresa" value="{{ filtros.empresa }}" placeholder="Informe o ID da empresa quando necessario">
+                    </div>
+                    <div class="col-12 col-md-4 d-flex align-items-end">
+                        <div class="d-grid w-100">
+                            <button class="btn btn-primary" type="submit">Filtrar</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section class="surface-card p-4 p-xl-5">
+            <div class="table-responsive">
+                <table class="table align-middle theme-table">
+                    <thead>
+                        <tr>
+                            <th>Contato</th>
+                            <th class="d-none d-lg-table-cell">Empresa</th>
+                            <th class="d-none d-md-table-cell">Cargo</th>
+                            <th>Status</th>
+                            <th class="text-end">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contato in contatos %}
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">{{ contato.nome }}</div>
+                                    <div class="small text-secondary">{{ contato.email|default:contato.telefone|default:"Sem canal principal" }}</div>
+                                </td>
+                                <td class="d-none d-lg-table-cell">{{ contato.empresa.nome }}</td>
+                                <td class="d-none d-md-table-cell">{{ contato.cargo|default:"Nao informado" }}</td>
+                                <td>
+                                    {% if contato.ativo %}
+                                        {% include "includes/status_badge.html" with tone="success" label="Ativo" %}
+                                    {% else %}
+                                        {% include "includes/status_badge.html" with tone="muted" label="Inativo" %}
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <a class="btn btn-outline-light btn-sm" href="{% url 'empresas:contato_update' contato.pk %}">Editar</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">
+                                    {% include "includes/empty_state.html" with empty_title="Nenhum contato cadastrado" empty_description="Cadastre responsaveis para enriquecer a gestao de relacionamento." %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% include "includes/pagination.html" %}
+        </section>
+    </div>
+
+    <div class="col-12 col-xxl-4">
+        <section class="surface-card p-4">
+            <p class="eyebrow mb-2">Atalhos</p>
+            <h2 class="h5 mb-3">Fluxo relacionado</h2>
+            <div class="d-grid gap-2">
+                <a class="btn btn-primary justify-content-center" href="{% url 'empresas:contato_create' %}">Novo contato</a>
+                <a class="btn btn-outline-light justify-content-center" href="{% url 'empresas:index' %}">Ver empresas</a>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

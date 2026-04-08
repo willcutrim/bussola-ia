@@ -1,0 +1,75 @@
+<section class="surface-card p-4 p-xl-5">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+            <p class="eyebrow mb-2">Base empresarial</p>
+            <h2 class="h4 mb-0">Empresas cadastradas</h2>
+        </div>
+        <div class="small text-secondary">{{ paginator.count|default:0 }} registros</div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle theme-table">
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th class="d-none d-md-table-cell">CNPJ</th>
+                    <th class="d-none d-xl-table-cell">Contato</th>
+                    <th class="d-none d-lg-table-cell">Cidade</th>
+                    <th>Status</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empresa in empresas %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ empresa.nome }}</div>
+                            <div class="small text-secondary">{{ empresa.nome_fantasia|default:empresa.razao_social|default:"Sem complemento" }}</div>
+                        </td>
+                        <td class="d-none d-md-table-cell">{{ empresa.cnpj|default:"Nao informado" }}</td>
+                        <td class="d-none d-xl-table-cell">
+                            {% with contatos=empresa.contatos.all %}
+                            {% with contato=contatos.0 %}
+                                {% if contato %}
+                                    <div>{{ contato.nome }}</div>
+                                    <div class="small text-secondary">{{ contato.email|default:contato.telefone|default:"Sem contato adicional" }}</div>
+                                {% else %}
+                                    <span class="text-secondary">Sem contato principal</span>
+                                {% endif %}
+                            {% endwith %}
+                            {% endwith %}
+                        </td>
+                        <td class="d-none d-lg-table-cell">{{ empresa.endereco.cidade|default:"-" }}</td>
+                        <td>
+                            {% if empresa.ativa %}
+                                {% include "includes/status_badge.html" with tone="success" label="Ativa" %}
+                            {% else %}
+                                {% include "includes/status_badge.html" with tone="muted" label="Inativa" %}
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-sm table-actions-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Ações
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end table-actions-menu">
+                                    <li><a class="dropdown-item" href="{% url 'empresas:detail' empresa.pk %}">Ver detalhes</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'empresas:update' empresa.pk %}">Editar</a></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'empresas:delete' empresa.pk %}">Excluir</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            {% include "empresas/empty_state.html" with empty_title="Nenhuma empresa encontrada" empty_description="Comece cadastrando empresas para estruturar o relacionamento comercial e os contatos." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "includes/pagination.html" %}
+</section>

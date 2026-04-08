@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% url 'documentos:index' as documentos_list_url %}
+{% include "includes/page_header.html" with eyebrow="Documentos" title=page_title subtitle=page_subtitle secondary_action_url=documentos_list_url secondary_action_label="Voltar para listagem" %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger rounded-4 border-0 mb-4">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row g-3 g-xl-4">
+        <div class="col-12 col-xl-8">
+            <section class="surface-card p-4 p-xl-5">
+                <div class="mb-4">
+                    <p class="eyebrow mb-2">Documento</p>
+                    <h2 class="h4 mb-0">Arquivo e metadados</h2>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.licitacao %}</div>
+                    <div class="col-12 col-lg-6">{% include "includes/form_field.html" with field=form.tipo %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.nome %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.arquivo %}</div>
+                    <div class="col-12">{% include "includes/form_field.html" with field=form.observacoes %}</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="d-grid gap-3 gap-xl-4">
+                <section class="surface-card p-4">
+                    <div class="mb-4">
+                        <p class="eyebrow mb-2">Status</p>
+                        <h2 class="h5 mb-0">Processamento</h2>
+                    </div>
+                    {% include "includes/form_field.html" with field=form.status %}
+                </section>
+
+                <section class="surface-card form-actions-card p-4">
+                    <div class="mb-3">
+                        <p class="eyebrow mb-2">Finalizacao</p>
+                        <h2 class="h5 mb-1">Salvar documento</h2>
+                        <p class="form-actions-note mb-0">Valide o arquivo e o status para manter o fluxo documental consistente.</p>
+                    </div>
+                    <div class="form-actions-divider"></div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-lg" type="submit">Salvar documento</button>
+                        <a class="btn btn-outline-light" href="{% url 'documentos:index' %}">Cancelar</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
