@@ -562,6 +562,22 @@ h6 {
     background: var(--bsla-primary);
 }
 
+.chart-bar-fill-success {
+    background: var(--bsla-success);
+}
+
+.chart-bar-fill-warning {
+    background: var(--bsla-warning);
+}
+
+.chart-bar-fill-danger {
+    background: var(--bsla-danger);
+}
+
+.chart-bar-fill-info {
+    background: var(--bsla-info);
+}
+
 .activity-item + .activity-item,
 .summary-item + .summary-item {
     border-top: 1px solid rgba(151, 168, 196, 0.12);
@@ -749,6 +765,27 @@ h6 {
 
 .dashboard-panel {
     position: relative;
+}
+
+.ai-attention-item {
+    padding: 1rem 1.05rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+}
+
+.ai-attention-item-warning {
+    border-color: rgba(245, 158, 11, 0.28);
+    background: linear-gradient(180deg, rgba(255, 251, 235, 0.98) 0%, rgba(255, 247, 237, 0.98) 100%);
+}
+
+.ai-attention-item-danger {
+    border-color: rgba(197, 48, 48, 0.2);
+    background: linear-gradient(180deg, rgba(254, 242, 242, 0.98) 0%, rgba(255, 247, 247, 0.98) 100%);
+}
+
+.ai-dashboard-failure-item {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(252, 252, 252, 0.98) 100%);
 }
 
 .dashboard-hover-lift,

@@ -77,9 +77,34 @@
     <div class="row g-3 g-xl-4">
         {% for ai_card in ai_cards %}
             <div class="{{ ai_card.col_class }}" id="{{ ai_card.panel_id }}">
-                {% include "analises/partials/ai_result_container.html" with analise=analise execucao=ai_card.execucao poll_trigger=ai_card.poll_trigger should_poll=ai_card.should_poll resultado_url=ai_card.resultado_url request_url=ai_card.request_url result_template_name=ai_card.result_template_name card_title=ai_card.card_title card_description=ai_card.card_description badge_label=ai_card.badge_label badge_tone_class=ai_card.badge_tone_class empty_title=ai_card.empty_title empty_description=ai_card.empty_description processing_message=ai_card.processing_message allow_reprocess=ai_card.allow_reprocess show_legacy_result=ai_card.show_legacy_result retry_button_label=ai_card.retry_button_label %}
+                {% include "analises/partials/ai_result_container.html" with analise=analise execucao=ai_card.execucao poll_trigger=ai_card.poll_trigger should_poll=ai_card.should_poll resultado_url=ai_card.resultado_url request_url=ai_card.request_url reprocess_url=ai_card.reprocess_url reprocess_target=ai_card.reprocess_target result_template_name=ai_card.result_template_name card_title=ai_card.card_title card_description=ai_card.card_description badge_label=ai_card.badge_label badge_tone_class=ai_card.badge_tone_class empty_title=ai_card.empty_title empty_description=ai_card.empty_description processing_message=ai_card.processing_message allow_reprocess=ai_card.allow_reprocess show_legacy_result=ai_card.show_legacy_result retry_button_label=ai_card.retry_button_label %}
             </div>
         {% endfor %}
+    </div>
+</section>
+
+<section class="mb-4">
+    <div class="row g-3 g-xl-4">
+        <div class="col-12 col-xxl-7">
+            <div
+                id="ai-history-panel"
+                class="surface-card p-4 p-xl-5"
+                hx-get="{{ ai_history_url }}"
+                hx-trigger="load, aiHistoryRefresh from:body"
+                hx-swap="innerHTML">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+                    <span class="text-secondary">Carregando historico das execucoes de IA...</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-xxl-5">
+            <div id="ai-execution-comparison-panel" class="surface-card p-4 p-xl-5">
+                <p class="eyebrow mb-2">Comparacao</p>
+                <h2 class="h5 mb-2">Comparar versoes de execucao</h2>
+                <p class="text-secondary mb-0">Selecione uma execucao no historico para comparar mudancas de modelo, status e resultado estruturado.</p>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

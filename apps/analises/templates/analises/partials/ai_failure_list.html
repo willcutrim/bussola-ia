@@ -1,0 +1,46 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Confiabilidade</span>
+            <h2 class="h4 mb-2">Falhas recentes</h2>
+            <p class="text-secondary mb-0">Lista os erros mais recentes com contexto suficiente para acao operacional e rastreabilidade.</p>
+        </div>
+        <span class="dashboard-chip dashboard-chip-warning">{{ dashboard_ai.resumo.total_falhas }} falhas acumuladas</span>
+    </div>
+
+    {% if dashboard_ai.falhas_recentes %}
+        <div class="d-grid gap-3">
+            {% for execucao in dashboard_ai.falhas_recentes %}
+                <article class="border rounded-4 p-3 ai-dashboard-failure-item">
+                    <div class="d-flex flex-column flex-xl-row justify-content-between gap-3">
+                        <div class="d-grid gap-2">
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                {% include "includes/status_badge.html" with tone="danger" label="Falhou" %}
+                                <strong>{{ execucao.get_tipo_tarefa_display }}</strong>
+                                <span class="small text-secondary">v{{ execucao.versao }}</span>
+                            </div>
+                            <div class="small text-secondary">{{ execucao.analise.titulo }} • {{ execucao.analise.licitacao.numero }}</div>
+                            <div class="small">{{ execucao.mensagem_erro|default:"Falha registrada sem mensagem resumida." }}</div>
+                            <div class="small text-secondary">
+                                {% if execucao.concluida_em %}
+                                    Falhou em {{ execucao.concluida_em|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    Solicitada em {{ execucao.solicitada_em|date:"d/m/Y H:i" }}
+                                {% endif %}
+                                {% if execucao.modelo_utilizado %}
+                                    • Modelo {{ execucao.modelo_utilizado }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-self-start">
+                            <a class="btn btn-outline-light btn-sm" href="{% url 'analises:detail' execucao.analise.pk %}">Abrir analise</a>
+                            <a class="btn btn-outline-light btn-sm" href="{% url 'analises:ia_execucao_detalhe' execucao.analise.pk execucao.pk %}">Abrir execucao</a>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Sem falhas recentes" empty_description="Nenhuma execucao falhou recentemente. Isso normalmente indica fila saudavel e boa estabilidade da integracao." %}
+    {% endif %}
+</section>

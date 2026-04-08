@@ -1,0 +1,31 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 h-100">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Cobertura funcional</span>
+            <h2 class="h4 mb-2">Distribuicao por tarefa</h2>
+            <p class="text-secondary mb-0">Mostra onde a IA esta sendo mais usada e quais fluxos concentram o volume operacional.</p>
+        </div>
+        <span class="dashboard-chip dashboard-chip-info">{{ dashboard_ai.resumo.total_analises_com_uso_ia }} analises com uso</span>
+    </div>
+
+    {% if dashboard_ai.task_distribution %}
+        <div class="d-grid gap-3">
+            {% for item in dashboard_ai.task_distribution %}
+                <article class="border rounded-4 p-3">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            {% include "includes/status_badge.html" with tone=item.tone label=item.label %}
+                            <span class="small text-secondary">{{ item.percentual }}% do volume total</span>
+                        </div>
+                        <strong>{{ item.total }}</strong>
+                    </div>
+                    <div class="chart-bar-track">
+                        <div class="chart-bar-fill chart-bar-fill-{{ item.tone }}" style="width: {{ item.percentual }}%"></div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Sem tarefas consolidadas" empty_description="O uso por resumo, extracao, parecer, comparacao e checklist aparecera conforme as execucoes forem sendo registradas." %}
+    {% endif %}
+</section>

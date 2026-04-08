@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% url 'analises:list' as analises_list_url %}
+{% include "includes/page_header.html" with eyebrow="Analises" title="Operacao de IA" subtitle=page_subtitle secondary_action_url=analises_list_url secondary_action_label="Voltar para analises" %}
+
+<div class="dashboard-shell">
+    <section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 mb-4 mb-xl-5">
+        <div class="d-flex flex-column flex-xl-row justify-content-between gap-3">
+            <div>
+                <span class="dashboard-eyebrow mb-3 d-inline-flex">Radar operacional</span>
+                <h2 class="dashboard-hero-title mb-3">IA em producao com foco em fila, falhas e produtividade.</h2>
+                <p class="dashboard-hero-subtitle mb-0">Acompanhe o volume de execucoes, o ritmo de conclusao, os pontos de falha e as analises que exigem acao imediata.</p>
+            </div>
+            <div class="d-flex flex-column align-items-xl-end gap-2">
+                <span class="dashboard-chip dashboard-chip-primary">{{ dashboard_ai.resumo.total_execucoes }} execucoes rastreadas</span>
+                <span class="dashboard-chip dashboard-chip-info">Tempo medio: {{ dashboard_ai.resumo.tempo_medio_processamento_label }}</span>
+                <span class="dashboard-chip dashboard-chip-neutral">{{ dashboard_ai.resumo.total_reprocessamentos }} reprocessamentos</span>
+            </div>
+        </div>
+    </section>
+
+    {% include "analises/partials/ai_kpi_cards.html" %}
+
+    <div class="row g-4 g-xxl-5 mb-4 mb-xl-5">
+        <div class="col-12 col-xl-6">
+            {% include "analises/partials/ai_status_distribution.html" %}
+        </div>
+        <div class="col-12 col-xl-6">
+            {% include "analises/partials/ai_task_distribution.html" %}
+        </div>
+    </div>
+
+    <div class="row g-4 g-xxl-5 mb-4 mb-xl-5">
+        <div class="col-12 col-xl-8">
+            {% include "analises/partials/ai_recent_executions.html" %}
+        </div>
+        <div class="col-12 col-xl-4">
+            {% include "analises/partials/ai_attention_list.html" %}
+        </div>
+    </div>
+
+    <div class="row g-4 g-xxl-5">
+        <div class="col-12">
+            {% include "analises/partials/ai_failure_list.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

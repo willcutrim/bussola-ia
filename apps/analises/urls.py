@@ -7,9 +7,14 @@ from .views import (
     AnaliseListView,
     AnaliseUpdateView,
 )
+from .views_dashboard import DashboardIAView
 from .views_ai import (
     AnaliseCompararDocumentoView,
     AnaliseComparacaoResultadoView,
+    AnaliseExecucaoIAComparacaoView,
+    AnaliseExecucaoIADetailView,
+    AnaliseExecucaoIAHistoryView,
+    AnaliseExecucaoIAReprocessarView,
     AnaliseChecklistResultadoView,
     AnaliseExtrairDadosDocumentoView,
     AnaliseExtracaoResultadoView,
@@ -24,6 +29,7 @@ app_name = "analises"
 
 urlpatterns = [
     path("", AnaliseListView.as_view(), name="list"),
+    path("dashboard/ia/", DashboardIAView.as_view(), name="dashboard_ia"),
     path("novo/", AnaliseCreateView.as_view(), name="create"),
     path("<int:pk>/", AnaliseDetailView.as_view(), name="detail"),
     path("<int:pk>/editar/", AnaliseUpdateView.as_view(), name="update"),
@@ -77,5 +83,25 @@ urlpatterns = [
         "<int:pk>/ia/checklist/resultado/",
         AnaliseChecklistResultadoView.as_view(),
         name="ia_checklist_resultado",
+    ),
+    path(
+        "<int:pk>/ia/historico/",
+        AnaliseExecucaoIAHistoryView.as_view(),
+        name="ia_execucao_historico",
+    ),
+    path(
+        "<int:pk>/ia/execucoes/comparacao/",
+        AnaliseExecucaoIAComparacaoView.as_view(),
+        name="ia_execucao_comparacao",
+    ),
+    path(
+        "<int:pk>/ia/execucoes/<int:execucao_pk>/",
+        AnaliseExecucaoIADetailView.as_view(),
+        name="ia_execucao_detalhe",
+    ),
+    path(
+        "<int:pk>/ia/execucoes/<int:execucao_pk>/reprocessar/",
+        AnaliseExecucaoIAReprocessarView.as_view(),
+        name="ia_execucao_reprocessar",
     ),
 ]

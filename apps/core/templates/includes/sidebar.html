@@ -38,13 +38,21 @@
                 </span>
                 Licitacoes
             </a>
-            <a class="nav-link sidebar-link {% if current_app == 'analises' %}active{% endif %}" href="{% url 'analises:list' %}">
+            <a class="nav-link sidebar-link {% if current_app == 'analises' and current_url != 'dashboard_ia' %}active{% endif %}" href="{% url 'analises:list' %}">
                 <span class="sidebar-link-icon">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 5h14v14H5V5Zm3 3v8h2V8H8Zm4 2v6h2v-6h-2Zm4-3v9h2V7h-2Z" fill="currentColor"/>
                     </svg>
                 </span>
                 Analises
+            </a>
+            <a class="nav-link sidebar-link {% if current_app == 'analises' and current_url == 'dashboard_ia' %}active{% endif %}" href="{% url 'analises:dashboard_ia' %}">
+                <span class="sidebar-link-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 19h16v-2H4v2Zm1-4h4V8H5v7Zm5 0h4V5h-4v10Zm5 0h4v-5h-4v5Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                Operacao IA
             </a>
             <a class="nav-link sidebar-link {% if current_app == 'documentos' %}active{% endif %}" href="{% url 'documentos:index' %}">
                 <span class="sidebar-link-icon">

@@ -19,6 +19,7 @@
                 {% if execucao.modelo_utilizado %}
                     <span class="small text-secondary">Modelo: {{ execucao.modelo_utilizado }}</span>
                 {% endif %}
+                <span class="small text-secondary">Versao: v{{ execucao.versao }}</span>
                 <span class="small text-secondary">Tentativas: {{ execucao.tentativas }}</span>
             </div>
 
@@ -27,9 +28,8 @@
                     <button
                         class="btn btn-outline-light btn-sm"
                         type="button"
-                        hx-post="{{ request_url }}"
-                        hx-include="#analise-ai-form"
-                        hx-target="closest .ai-panel-shell"
+                        hx-post="{{ reprocess_url }}"
+                        hx-target="{{ reprocess_target }}"
                         hx-swap="innerHTML"
                         hx-indicator="#ai-processing-indicator">
                         {{ retry_button_label }}
@@ -55,6 +55,16 @@
             <div class="col-12 col-sm-6">
                 {% if execucao.identificador_task %}
                     <div class="small text-secondary">Execucao {{ execucao.identificador_task|truncatechars:18 }}</div>
+                {% endif %}
+            </div>
+            <div class="col-12 col-sm-6">
+                {% if execucao.criado_por %}
+                    <div class="small text-secondary">Solicitada por {{ execucao.criado_por }}</div>
+                {% endif %}
+            </div>
+            <div class="col-12 col-sm-6">
+                {% if execucao.reprocessamento_de_id %}
+                    <div class="small text-secondary">Reprocessamento da versao v{{ execucao.reprocessamento_de.versao }}</div>
                 {% endif %}
             </div>
         </div>

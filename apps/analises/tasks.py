@@ -93,11 +93,12 @@ def _executar_execucao_ia(*, context, execucao_id: int, tipo_tarefa: str, task_h
 
     try:
         resultado = _processar_execucao(ai_service=ai_service, execucao=execucao)
-    except AITransientError:
+    except AITransientError as exc:
         logger.warning("Falha transitoria em execucao IA", exc_info=True, extra=log_context)
         execucao_retry = execucao_service.reagendar_retry(
             execucao,
             task_handler=task_handler,
+            erro_detalhe_interno=_build_internal_error_detail(exc),
         )
         if execucao_retry is not None:
             return {
@@ -105,25 +106,38 @@ def _executar_execucao_ia(*, context, execucao_id: int, tipo_tarefa: str, task_h
                 "status": execucao_retry.status,
                 "retry_agendado": True,
             }
-        execucao_service.marcar_falha(execucao, mensagem_erro=ERRO_TRANSITORIO_IA)
+        execucao_service.marcar_falha(
+            execucao,
+            mensagem_erro=ERRO_TRANSITORIO_IA,
+            erro_detalhe_interno=_build_internal_error_detail(exc),
+        )
         raise
     except (
         AIPermanentError,
         ImproperlyConfigured,
         ValidationError,
         ValueError,
-    ):
+    ) as exc:
         logger.exception("Falha permanente em execucao IA", extra=log_context)
-        execucao_service.marcar_falha(execucao, mensagem_erro=ERRO_PROCESSAMENTO_IA)
+        execucao_service.marcar_falha(
+            execucao,
+            mensagem_erro=ERRO_PROCESSAMENTO_IA,
+            erro_detalhe_interno=_build_internal_error_detail(exc),
+        )
         raise
-    except Exception:
+    except Exception as exc:
         logger.exception("Falha inesperada em execucao IA", extra=log_context)
-        execucao_service.marcar_falha(execucao, mensagem_erro=ERRO_PROCESSAMENTO_IA)
+        execucao_service.marcar_falha(
+            execucao,
+            mensagem_erro=ERRO_PROCESSAMENTO_IA,
+            erro_detalhe_interno=_build_internal_error_detail(exc),
+        )
         raise
 
     execucao_service.marcar_concluida(
         execucao,
         resultado_payload=resultado.payload,
+        resultado_bruto=resultado.raw_text,
         modelo_utilizado=resultado.model,
         response_id=resultado.response_id,
     )
@@ -140,6 +154,13 @@ def _executar_execucao_ia(*, context, execucao_id: int, tipo_tarefa: str, task_h
         "status": "concluido",
         "modelo": resultado.model,
     }
+
+
+def _build_internal_error_detail(exc: Exception) -> str:
+    message = str(exc).strip()
+    if message:
+        return f"{exc.__class__.__name__}: {message}"
+    return exc.__class__.__name__
 
 
 def _processar_execucao(*, ai_service: AnaliseAIService, execucao):

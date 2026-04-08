@@ -1,0 +1,39 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 h-100">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Atencao</span>
+            <h2 class="h4 mb-2">Itens que exigem acao</h2>
+            <p class="text-secondary mb-0">Sinaliza gargalos simples e sustentaveis: processamento prolongado, falhas recorrentes e analises criticas sem parecer concluido.</p>
+        </div>
+        <span class="dashboard-chip {% if dashboard_ai.itens_atencao %}dashboard-chip-warning{% else %}dashboard-chip-success{% endif %}">
+            {{ dashboard_ai.itens_atencao|length }} alertas
+        </span>
+    </div>
+
+    {% if dashboard_ai.itens_atencao %}
+        <div class="d-grid gap-3">
+            {% for item in dashboard_ai.itens_atencao %}
+                <article class="ai-attention-item ai-attention-item-{{ item.tone }}">
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            {% include "includes/status_badge.html" with tone=item.tone label=item.title %}
+                        </div>
+                        <div class="small">{{ item.description }}</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if item.analise %}
+                                <a class="btn btn-outline-light btn-sm" href="{% url 'analises:detail' item.analise.pk %}">Abrir analise</a>
+                            {% elif item.analise_id %}
+                                <a class="btn btn-outline-light btn-sm" href="{% url 'analises:detail' item.analise_id %}">Abrir analise</a>
+                            {% endif %}
+                            {% if item.execucao %}
+                                <a class="btn btn-outline-light btn-sm" href="{% url 'analises:ia_execucao_detalhe' item.execucao.analise.pk item.execucao.pk %}">Abrir execucao</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Sem alertas operacionais" empty_description="Nenhum item critico foi identificado agora. A fila parece saudavel e as analises prioritarias estao cobertas." %}
+    {% endif %}
+</section>

@@ -34,9 +34,11 @@ class AnaliseExecucaoIAAdmin(BaseModelAdmin):
         "id",
         "analise",
         "tipo_tarefa",
+        "versao",
         "status",
         "tentativas",
         "modelo_utilizado",
+        "criado_por",
         "solicitada_em",
         "concluida_em",
     )
@@ -45,11 +47,15 @@ class AnaliseExecucaoIAAdmin(BaseModelAdmin):
         "analise__licitacao__numero",
         "identificador_task",
         "response_id",
+        "modelo_utilizado",
+        "criado_por__username",
+        "criado_por__email",
     )
-    list_filter = ("tipo_tarefa", "status", "solicitada_em")
-    list_select_related = ("analise", "analise__licitacao")
+    list_filter = ("tipo_tarefa", "status", "modelo_utilizado", "solicitada_em")
+    list_select_related = ("analise", "analise__licitacao", "criado_por", "reprocessamento_de")
     ordering = ("-solicitada_em",)
     readonly_fields = BaseModelAdmin.readonly_base_fields + (
+        "versao",
         "solicitada_em",
         "iniciada_em",
         "concluida_em",

@@ -1,0 +1,31 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 h-100">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Saude da fila</span>
+            <h2 class="h4 mb-2">Distribuicao por status</h2>
+            <p class="text-secondary mb-0">Leitura rapida para entender o equilibrio entre fila, processamento, sucesso e falhas.</p>
+        </div>
+        <span class="dashboard-chip dashboard-chip-neutral">{{ dashboard_ai.resumo.total_execucoes }} eventos</span>
+    </div>
+
+    {% if dashboard_ai.status_distribution %}
+        <div class="d-grid gap-3">
+            {% for item in dashboard_ai.status_distribution %}
+                <article class="border rounded-4 p-3">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            {% include "includes/status_badge.html" with tone=item.tone label=item.label %}
+                            <span class="small text-secondary">{{ item.percentual }}% do volume total</span>
+                        </div>
+                        <strong>{{ item.total }}</strong>
+                    </div>
+                    <div class="chart-bar-track">
+                        <div class="chart-bar-fill chart-bar-fill-{{ item.tone }}" style="width: {{ item.percentual }}%"></div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Sem execucoes registradas" empty_description="Assim que a camada de IA receber solicitacoes, a distribuicao operacional aparecera aqui." %}
+    {% endif %}
+</section>

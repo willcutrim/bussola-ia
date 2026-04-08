@@ -1,0 +1,9 @@
+<section class="mb-4 mb-xl-5">
+    <div class="row g-3 g-xl-4">
+        {% for item in dashboard_kpis %}
+            <div class="col-12 col-md-6 col-xxl-3">
+                {% include "includes/kpi_card.html" with title=item.title value=item.value helper=item.helper tone=item.tone icon=item.icon %}
+            </div>
+        {% endfor %}
+    </div>
+</section>

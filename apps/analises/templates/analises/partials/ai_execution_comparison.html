@@ -1,0 +1,103 @@
+{% if comparison_error %}
+    <div class="alert alert-danger mb-0">
+        {{ comparison_error }}
+    </div>
+{% elif comparison %}
+    <div class="d-grid gap-4">
+        <div>
+            <p class="eyebrow mb-2">Comparacao</p>
+            <h2 class="h5 mb-2">{{ comparison.execucao_comparada.get_tipo_tarefa_display }}: v{{ comparison.execucao_base.versao }} x v{{ comparison.execucao_comparada.versao }}</h2>
+            <p class="text-secondary mb-0">Comparativo entre duas execucoes da mesma tarefa para evidenciar mudancas operacionais e de conteudo.</p>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <div class="border rounded-4 p-3 h-100">
+                    <div class="fw-semibold mb-2">Versao base</div>
+                    <div class="small text-secondary">v{{ comparison.execucao_base.versao }} • {{ comparison.execucao_base.get_status_display }} • {{ comparison.execucao_base.modelo_utilizado|default:"Sem modelo" }}</div>
+                    <div class="small text-secondary">Solicitada em {{ comparison.execucao_base.solicitada_em|date:"d/m/Y H:i" }}</div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="border rounded-4 p-3 h-100">
+                    <div class="fw-semibold mb-2">Versao comparada</div>
+                    <div class="small text-secondary">v{{ comparison.execucao_comparada.versao }} • {{ comparison.execucao_comparada.get_status_display }} • {{ comparison.execucao_comparada.modelo_utilizado|default:"Sem modelo" }}</div>
+                    <div class="small text-secondary">Solicitada em {{ comparison.execucao_comparada.solicitada_em|date:"d/m/Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <section class="border rounded-4 p-3">
+            <h3 class="h6 mb-3">Mudancas de metadados</h3>
+            {% if comparison.mudancas_metadados %}
+                <div class="d-grid gap-2">
+                    {% for item in comparison.mudancas_metadados %}
+                        <div class="border rounded-3 p-3">
+                            <div class="fw-semibold mb-1">{{ item.label }}</div>
+                            <div class="small text-secondary">Antes: {{ item.antes }}</div>
+                            <div class="small text-secondary">Depois: {{ item.depois }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-secondary small">Nenhuma mudanca relevante de metadados entre as execucoes selecionadas.</div>
+            {% endif %}
+        </section>
+
+        <section class="border rounded-4 p-3">
+            <h3 class="h6 mb-3">Mudancas no resultado estruturado</h3>
+            {% if comparison.houve_mudanca_resultado %}
+                <div class="d-grid gap-3">
+                    {% if comparison.campos_alterados %}
+                        <div>
+                            <div class="fw-semibold mb-2">Campos alterados</div>
+                            <div class="d-grid gap-2">
+                                {% for item in comparison.campos_alterados %}
+                                    <div class="border rounded-3 p-3">
+                                        <div class="fw-semibold mb-1">{{ item.campo }}</div>
+                                        <div class="small text-secondary">Antes: {{ item.antes }}</div>
+                                        <div class="small text-secondary">Depois: {{ item.depois }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if comparison.campos_adicionados %}
+                        <div>
+                            <div class="fw-semibold mb-2">Campos adicionados</div>
+                            <div class="d-grid gap-2">
+                                {% for item in comparison.campos_adicionados %}
+                                    <div class="border rounded-3 p-3">
+                                        <div class="fw-semibold mb-1">{{ item.campo }}</div>
+                                        <div class="small text-secondary">Depois: {{ item.depois }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if comparison.campos_removidos %}
+                        <div>
+                            <div class="fw-semibold mb-2">Campos removidos</div>
+                            <div class="d-grid gap-2">
+                                {% for item in comparison.campos_removidos %}
+                                    <div class="border rounded-3 p-3">
+                                        <div class="fw-semibold mb-1">{{ item.campo }}</div>
+                                        <div class="small text-secondary">Antes: {{ item.antes }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="text-secondary small">As execucoes possuem o mesmo resultado estruturado registrado.</div>
+            {% endif %}
+        </section>
+    </div>
+{% else %}
+    <div class="text-secondary">
+        Nenhuma comparacao selecionada.
+    </div>
+{% endif %}

@@ -1,0 +1,71 @@
+<section class="surface-card dashboard-panel rounded-4 border-0 shadow-sm p-4 p-xl-5 h-100">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <span class="dashboard-eyebrow mb-2 d-inline-flex">Atividade recente</span>
+            <h2 class="h4 mb-2">Ultimas execucoes</h2>
+            <p class="text-secondary mb-0">Acompanhamento operacional das solicitacoes mais recentes, com contexto de analise, modelo e status.</p>
+        </div>
+        <span class="dashboard-chip dashboard-chip-neutral">Fila viva</span>
+    </div>
+
+    {% if dashboard_ai.execucoes_recentes %}
+        <div class="table-responsive">
+            <table class="table align-middle theme-table dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Tarefa</th>
+                        <th>Analise</th>
+                        <th>Status</th>
+                        <th>Modelo</th>
+                        <th>Versao</th>
+                        <th>Horario</th>
+                        <th class="text-end">Acoes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for execucao in dashboard_ai.execucoes_recentes %}
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">{{ execucao.get_tipo_tarefa_display }}</div>
+                                <div class="small text-secondary">Task {{ execucao.identificador_task|default:"aguardando id"|truncatechars:18 }}</div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">{{ execucao.analise.titulo }}</div>
+                                <div class="small text-secondary">{{ execucao.analise.licitacao.numero }}</div>
+                            </td>
+                            <td>
+                                {% if execucao.status == "concluido" %}
+                                    {% include "includes/status_badge.html" with tone="success" label="Concluido" %}
+                                {% elif execucao.status == "em_processamento" %}
+                                    {% include "includes/status_badge.html" with tone="info" label="Em processamento" %}
+                                {% elif execucao.status == "falhou" %}
+                                    {% include "includes/status_badge.html" with tone="danger" label="Falhou" %}
+                                {% else %}
+                                    {% include "includes/status_badge.html" with tone="warning" label="Pendente" %}
+                                {% endif %}
+                            </td>
+                            <td>{{ execucao.modelo_utilizado|default:"Aguardando" }}</td>
+                            <td>v{{ execucao.versao }}</td>
+                            <td>
+                                <div>{{ execucao.solicitada_em|date:"d/m/Y" }}</div>
+                                <div class="small text-secondary">{{ execucao.solicitada_em|date:"H:i" }}</div>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                                    <a class="btn btn-outline-light btn-sm" href="{% url 'analises:detail' execucao.analise.pk %}">
+                                        Analise
+                                    </a>
+                                    <a class="btn btn-outline-light btn-sm" href="{% url 'analises:ia_execucao_detalhe' execucao.analise.pk execucao.pk %}">
+                                        Execucao
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        {% include "includes/empty_state.html" with empty_title="Sem atividade recente" empty_description="Assim que houver solicitacoes de IA, as execucoes recentes aparecerao aqui com contexto operacional." %}
+    {% endif %}
+</section>
