@@ -6,11 +6,11 @@ from django.urls import reverse
 
 from apps.empresas.models import Empresa
 
-from .choices import ModalidadeChoices, SituacaoChoices
-from .models import Licitacao
-from .repositories import LicitacaoRepository
-from .services import LicitacaoService
-from .views import LicitacaoListView
+from apps.licitacoes.choices import ModalidadeChoices, SituacaoChoices
+from apps.licitacoes.models import Licitacao
+from apps.licitacoes.repositories import LicitacaoRepository
+from apps.licitacoes.services import LicitacaoService
+from apps.licitacoes.views import LicitacaoListView
 
 
 class LicitacoesBaseTestCase(TestCase):
